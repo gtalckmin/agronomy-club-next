@@ -1,7 +1,7 @@
 import "@/styles/globals.css";
 
 import type { Metadata } from "next";
-import { IBM_Plex_Mono,Merriweather, Roboto_Slab } from "next/font/google";
+import { IBM_Plex_Mono, Merriweather, Roboto_Slab } from "next/font/google";
 
 import Providers from "@/components/main/providers";
 import { Footer } from "@/components/ui/footer";
