@@ -48,9 +48,10 @@ class EventAdmin(unfold.admin.ModelAdmin):
 
 @admin.register(User)
 class UsersAdmin(unfold.admin.ModelAdmin):
-    list_display = ('id', 'full_name', 'grad_yr', 'discipline', 'email', 'global_role')
+    list_display = ('id', 'full_name', 'grad_yr', 'discipline', 'email', 'firebase_uid', 'global_role')
     search_fields = ('id', 'full_name', 'discipline',)
     list_filter = ('grad_yr', 'global_role')
+    readonly_fields = ('firebase_uid',)
 
 
 @admin.register(ChapterMembership)

@@ -132,6 +132,7 @@ class User(models.Model):
     grad_yr = models.PositiveIntegerField(validators=[MinValueValidator(1900), max_value_curr_year])
     discipline = models.CharField(max_length=30)
     email = models.EmailField(max_length=255, unique=True)
+    firebase_uid = models.CharField(max_length=128, unique=True, null=True, blank=True, editable=False)
     global_role = models.CharField(max_length=100, choices=[('admin', 'Admin'), ('alumni', 'Alumni'), ('user', 'User')], default='user')
     photo = models.ImageField(null=True, blank=True, upload_to=create_photo_path)
 

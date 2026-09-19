@@ -67,6 +67,25 @@ class UserModelSmokeTests(TestCase):
                     global_role="admin",
                 )
 
+    def test_rejects_duplicate_firebase_uid(self):
+        User.objects.create(
+            full_name="Ada Lovelace",
+            grad_yr=2030,
+            discipline="Agronomy",
+            email="ada@example.com",
+            firebase_uid="firebase-ada",
+        )
+
+        with self.assertRaises(IntegrityError):
+            with transaction.atomic():
+                User.objects.create(
+                    full_name="Grace Hopper",
+                    grad_yr=2031,
+                    discipline="Soil Science",
+                    email="grace@example.com",
+                    firebase_uid="firebase-ada",
+                )
+
     def test_rejects_invalid_graduation_year_on_clean(self):
         user = User(
             full_name="Bad Year",
