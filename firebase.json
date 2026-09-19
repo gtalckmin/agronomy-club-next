@@ -2,7 +2,8 @@
   "$schema": "https://raw.githubusercontent.com/firebase/firebase-tools/master/schema/firebase-config.json",
   "hosting": {
     "site": "agronomy-club",
-    "source": "./client",
+    "public": "client/out",
+    "cleanUrls": true,
     "ignore": [
       "firebase.json",
       "**/.*",
@@ -12,9 +13,13 @@
       "firebase-debug.log",
       "firebase-debug.*.log"
     ],
-    "frameworksBackend": {
-      "region": "asia-southeast1"
-    }
+    "redirects": [
+      {
+        "source": "/chapters/:id",
+        "destination": "/chapters?chapter=:id",
+        "type": 301
+      }
+    ]
   },
   "apphosting": [
     {

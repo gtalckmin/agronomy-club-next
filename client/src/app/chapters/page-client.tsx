@@ -7,11 +7,14 @@ import { useEffect, useState } from "react";
 import ChapterCard from "@/components/chapter-card";
 import { useChapters } from "@/hooks/useChapters";
 
+import ChapterClient from "./[id]/chapter-client";
+
 export default function ChaptersClient() {
   const [page, setPage] = useState(1);
 
   const router = useRouter();
   const params = useSearchParams();
+  const chapterId = params.get("chapter");
 
   useEffect(() => {
     router.push(`/chapters?page=${page}`);
@@ -27,6 +30,10 @@ export default function ChaptersClient() {
       setPage(1);
     }
   }, [params.get("page")]);
+
+  if (chapterId) {
+    return <ChapterClient chapterId={chapterId} />;
+  }
 
   const pageSize = 15;
 
@@ -101,7 +108,9 @@ export default function ChaptersClient() {
                 description={chapter.desc}
                 color={chapter.colour}
                 initials={initials}
-                onView={() => (location.href = `/chapters/${chapter.id}`)}
+                onView={() =>
+                  (location.href = `/chapters?chapter=${chapter.id}`)
+                }
               />
             );
           } else {
@@ -114,7 +123,9 @@ export default function ChaptersClient() {
                 description={chapter.desc}
                 color={chapter.colour}
                 imageUrl={chapter.logo}
-                onView={() => (location.href = `/chapters/${chapter.id}`)}
+                onView={() =>
+                  (location.href = `/chapters?chapter=${chapter.id}`)
+                }
               />
             );
           }

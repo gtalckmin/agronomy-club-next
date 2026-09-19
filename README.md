@@ -47,7 +47,7 @@ cd server && poetry run python manage.py test
 
 Pushing to `main` builds and publishes frontend and backend images to GitHub Container Registry. The production Compose file is [docker-compose.prod.yml](docker-compose.prod.yml) and is configured for this fork's image names; configure a private `.env.prod` on the host from `.env.prod.example` before deploying.
 
-The recommended managed production architecture is Firebase App Hosting for the Next.js client, Cloud Run for Django, and Cloud SQL for PostgreSQL. This is not implemented by the Compose file; see [the deployment strategy](docs/DEPLOYMENT-STRATEGY.md) before provisioning production infrastructure.
+The managed production architecture is Firebase Hosting for the statically exported Next.js client, Cloud Run for Django, and Cloud SQL for PostgreSQL. Firebase App Hosting remains the isolated staging environment. This is not implemented by the Compose file; see [the deployment strategy](docs/DEPLOYMENT-STRATEGY.md) before provisioning production infrastructure.
 
 ## Repository relationships
 

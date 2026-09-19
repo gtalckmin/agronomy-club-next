@@ -11,6 +11,7 @@ const isWindowsDevContainer = () =>
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: "export",
   reactStrictMode: true,
   experimental: {
     // Next 16.3's CLI checker cannot capture TypeScript output in this runtime.
@@ -31,16 +32,8 @@ const nextConfig = {
       }
     : undefined,
 
-  async rewrites() {
-    return [
-      {
-        source: "/quizzes/download/:id",
-        destination: `${process.env.NEXT_PUBLIC_BACKEND_URL}/quizzes/download/:id/`,
-      },
-    ];
-  },
-
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: "http",

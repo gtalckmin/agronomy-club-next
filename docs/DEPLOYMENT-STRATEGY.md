@@ -1,6 +1,6 @@
 # Firebase and Google Cloud deployment strategy
 
-**Status:** The isolated App Hosting staging backend is configured for a local-source rollout. The Firebase Hosting production migration to `https://agronomy-club.web.app` and the import of the six verified legacy member profiles are approved; use [PRODUCTION-RELEASE.md](PRODUCTION-RELEASE.md) for the recorded, staged release procedure. Custom-domain cutover remains outside this release.
+**Status:** The isolated App Hosting staging backend is configured for a local-source rollout. Production uses a static Firebase Hosting deployment at `https://agronomy-club.web.app`; the legacy Firestore member migration is intentionally deferred so its users can be exported and uploaded later. Use [PRODUCTION-RELEASE.md](PRODUCTION-RELEASE.md) for the recorded release procedure. Custom-domain cutover remains outside this release.
 
 ## Why this changes the deployment model
 
@@ -12,7 +12,7 @@ This repository has a different application architecture:
 Next.js client  →  Django API  →  PostgreSQL
 ```
 
-It cannot be deployed as the former static/Firebase-Functions application without changing its backend and data model. The checked-in production Compose file is useful for local and self-managed-host deployments, but it does not define a complete managed-cloud deployment: it has no configured public hostname, certificate source, hosted database, or persistent media store.
+The client can be statically exported to Firebase Hosting because authenticated and live data flows use the separate Django API. The checked-in production Compose file is useful for local and self-managed-host deployments, but it does not define a complete managed-cloud deployment: it has no configured public hostname, certificate source, hosted database, or persistent media store.
 
 The recommended direction is to keep the established Firebase and Google Cloud estate, while moving this application to managed services that suit its architecture.
 
@@ -25,8 +25,8 @@ Visitors
 www.agronomyclub.org
    │
    ▼
-Firebase App Hosting
-   └── Next.js application (`client/`)
+Firebase Hosting
+   └── Static Next.js export (`client/out`)
             │ HTTPS API requests
             ▼
      Cloud Run service
@@ -40,7 +40,7 @@ Secret Manager ── Django secret, database credentials, admin bootstrap secre
 Cloud Logging/Monitoring ── application and deployment visibility
 ```
 
-Firebase App Hosting is the recommended frontend delivery path because it has managed Next.js support and GitHub-connected rollouts. It builds the client in Google Cloud, runs it on Cloud Run, and delivers it through Cloud CDN. Cloud Run is the appropriate managed runtime for the existing Django container, while Cloud SQL provides the PostgreSQL database that Django expects.
+Firebase Hosting is the production frontend delivery path. It serves the tested static Next.js export through its CDN, while client-side requests use the explicit Django API origin. Firebase App Hosting remains useful for the separate staging backend. Cloud Run is the managed runtime for the existing Django container, while Cloud SQL provides the PostgreSQL database that Django expects.
 
 This separates frontend and API deployments while avoiding a manually maintained virtual machine, a Docker auto-updater, and hand-managed TLS certificates.
 

@@ -14,7 +14,7 @@ This runbook releases the managed Agronomy Club stack to `https://agronomy-club.
 - **Production Firestore importer job:** `agronomy-club-import-firestore-members-prod`
 - **Previous live Hosting version:** `3c44a8ab43b9413c`
 
-The release imports the six real `users` documents from legacy Firestore. It does not load generated chapters, demo fixtures, media, quizzes, events, resources, or unverified Firestore fields. Firebase Authentication remains the identity provider and Firebase passwords are unchanged.
+This release does not import legacy Firestore members. The legacy `users` documents remain untouched so they can be exported and uploaded later through a separately scheduled, reviewed migration. Firebase Authentication remains the identity provider and Firebase passwords are unchanged.
 
 ## Before provisioning
 
@@ -66,9 +66,9 @@ The expected responses are `Pong!` and HTTP `200` for the Django Admin sign-in p
 | Production API host | |
 | Deployment timestamp (AWST) | |
 
-## Firestore member import
+## Deferred Firestore member import
 
-The importer is safe by default. It reads only Firestore `users/{uid}` documents and writes no member record unless the job runs with `--apply`. It queries Firebase Authentication for the authoritative email and skips a Firestore document if the UID, name, role, or optional source email is invalid. Existing Django profiles are never overwritten.
+The importer is safe by default. It reads only Firestore `users/{uid}` documents and writes no member record unless the job runs with `--apply`. It queries Firebase Authentication for the authoritative email and skips a Firestore document if the UID, name, role, or optional source email is invalid. Existing Django profiles are never overwritten. Do not run this section as part of the initial website promotion; it is retained as the documented procedure for a later member migration.
 
 First update the job to run the machine-checkable dry-run gate, then execute it:
 
@@ -100,7 +100,7 @@ After the reconciliation succeeds, restore the job to its default dry-run comman
 
 ## Firebase Hosting preview and promotion
 
-Create a local ignored frontend build file from the public template. It contains public browser identifiers and the generated production API URL; it contains no server credential.
+Create a local ignored frontend build file from the public template. It contains public browser identifiers and the generated production API URL; it contains no server credential. The production client uses Next.js static export and Firebase Hosting serves `client/out` directly. Image requests are direct browser requests and all live data continues to be fetched from Django's API.
 
 ```bash
 cp client/.env.production.example client/.env.production
