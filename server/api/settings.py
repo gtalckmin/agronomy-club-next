@@ -12,28 +12,37 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 import os
 from pathlib import Path
+
 from dotenv import load_dotenv
+from api.deployment import required_environment
+
 load_dotenv()
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-FRONTEND_URL = os.environ.get("FRONTEND_URL")
+APP_ENV = os.environ.get("APP_ENV", "DEVELOPMENT").upper()
+IS_PRODUCTION = APP_ENV == "PRODUCTION"
+FRONTEND_URL = (
+    required_environment("FRONTEND_URL")
+    if IS_PRODUCTION
+    else os.environ.get("FRONTEND_URL", "http://localhost:3000")
+)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("API_SECRET_KEY")
+SECRET_KEY = required_environment("API_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("APP_ENV") == "DEVELOPMENT"
+DEBUG = APP_ENV == "DEVELOPMENT"
 
 ALLOWED_HOSTS = (
-    os.environ.get("API_ALLOWED_HOSTS").split()
-    if os.environ.get("API_ALLOWED_HOSTS")
-    else []
+    required_environment("API_ALLOWED_HOSTS").split()
+    if IS_PRODUCTION
+    else os.environ.get("API_ALLOWED_HOSTS", ".localhost 127.0.0.1 [::1]").split()
 )
 
 # Application definition
@@ -70,7 +79,18 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3003",
     "http://127.0.0.1:3000",
     FRONTEND_URL
-]
+] if not IS_PRODUCTION else [FRONTEND_URL]
+
+CSRF_TRUSTED_ORIGINS = [FRONTEND_URL]
+
+if IS_PRODUCTION:
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+    SECURE_HSTS_PRELOAD = False
 
 ROOT_URLCONF = "api.urls"
 
@@ -129,11 +149,28 @@ WSGI_APPLICATION = "api.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("POSTGRES_NAME") or "postgres",
-        "USER": os.environ.get("POSTGRES_USER") or "postgres",
-        "PASSWORD": os.environ.get("POSTGRES_PASSWORD") or "password",
-        "HOST": os.environ.get("POSTGRES_HOST") or "host.docker.internal",
-        "PORT": os.environ.get("POSTGRES_PORT") or 5432,
+        "NAME": (
+            required_environment("POSTGRES_NAME")
+            if IS_PRODUCTION
+            else os.environ.get("POSTGRES_NAME", "postgres")
+        ),
+        "USER": (
+            required_environment("POSTGRES_USER")
+            if IS_PRODUCTION
+            else os.environ.get("POSTGRES_USER", "postgres")
+        ),
+        "PASSWORD": (
+            required_environment("POSTGRES_PASSWORD")
+            if IS_PRODUCTION
+            else os.environ.get("POSTGRES_PASSWORD", "password")
+        ),
+        "HOST": (
+            required_environment("POSTGRES_HOST")
+            if IS_PRODUCTION
+            else os.environ.get("POSTGRES_HOST", "host.docker.internal")
+        ),
+        "PORT": os.environ.get("POSTGRES_PORT", "5432"),
+        "CONN_MAX_AGE": 60 if IS_PRODUCTION else 0,
     }
 }
 

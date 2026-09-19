@@ -116,6 +116,12 @@ Do not export service-account keys, production credentials, or an unreviewed Fir
 
 **Exit condition:** a staging site is reachable on a temporary Firebase/App Hosting domain and communicates only with the staging API and database.
 
+### Django Cloud Run release contract
+
+The API container starts the Django development server only when `APP_ENV=DEVELOPMENT`. A managed deployment must set `APP_ENV=PRODUCTION`; the container then starts Gunicorn on Cloud Run's `PORT` (default `8080`). Production startup deliberately does not wait for PostgreSQL, apply migrations, collect static files, or create a superuser. Run migrations as a separate, recorded Cloud Run Job after each release; create staff users through a separate one-off administrative command.
+
+Production settings require non-empty values for `API_SECRET_KEY`, `FRONTEND_URL`, `API_ALLOWED_HOSTS`, and all `POSTGRES_*` connection settings. Cloud Run must provide the database password and Django secret from Secret Manager. The deployment uses Cloud Run's HTTPS proxy headers to enforce HTTPS, secure Django session/CSRF cookies, HSTS, exact CORS origins, and exact allowed hosts.
+
 ### 3. Verify staging
 
 - Run Django migrations against the staging database.
