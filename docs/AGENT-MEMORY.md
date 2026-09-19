@@ -5,7 +5,7 @@ This is concise persistent context for future operators and coding agents. Read 
 ## Current facts
 
 - Active repository: `gtalckmin/agronomy-club-next`; upstream: `codersforcauses/agronomy-club`.
-- Current working branch: `feat/plant-landing-security`; `f906d16` fixed the Chapters detail hook-order failure. Pagination must read `?page=` directly; do not add a router effect that writes the same URL back to the browser.
+- Current working branch: `feat/plant-landing-security`; `f906d16` fixed the Chapters detail hook-order failure and `8946960` removed the pagination URL feedback loop. Pagination must read `?page=` directly; do not add a router effect that writes the same URL back to the browser.
 - Public production: `https://www.agronomyclub.au`; Firebase Hosting fallback: `https://agronomy-club.web.app`.
 - Hosting serves `client/out`; build with `npm run build` from `client/`, then use `firebase deploy --only hosting --project agronomy-club --non-interactive`.
 - Production Django runs in Cloud Run service `agronomy-club-api-prod` in `asia-southeast1`; data is Cloud SQL PostgreSQL instance `agronomy-club-postgres-prod`.

@@ -168,7 +168,7 @@ Validation completed before release:
 
 ### Chapter pagination feedback-loop hardening
 
-The Chapters list previously kept a local page state and wrote it back to
+Commit `8946960` removed local page state that wrote to
 `/chapters?page=<page>` from a router effect. Under the static export this
 could repeatedly remount the route in some browsers. Pagination now derives
 the requested positive whole-number page directly from the URL, with invalid

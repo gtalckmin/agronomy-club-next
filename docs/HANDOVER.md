@@ -59,7 +59,7 @@ FRONTEND_URL=https://agronomy-club.web.app
 FRONTEND_EXTRA_ORIGINS=https://www.agronomyclub.au
 ```
 
-Commit `f906d16` fixed the Chapters detail route. The former implementation conditionally called a React Query hook, so selecting a chapter changed the React hook order and produced “This page couldn’t load.” The list now runs in its own component. Pagination also reads the `page` query parameter directly instead of writing it back through a router effect, preventing a static-export navigation feedback loop. After every Hosting release, test:
+Commit `f906d16` fixed the Chapters detail route. The former implementation conditionally called a React Query hook, so selecting a chapter changed the React hook order and produced “This page couldn’t load.” The list now runs in its own component. Commit `8946960` makes pagination read the `page` query parameter directly instead of writing it back through a router effect, preventing a static-export navigation feedback loop. After every Hosting release, test:
 
 1. `https://www.agronomyclub.au/chapters?page=1` loads a UWA card.
 2. Selecting **View** opens `/chapters?chapter=1`.
