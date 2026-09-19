@@ -2,26 +2,24 @@
 
 ## Objective
 
-Create a fast, accessible Agronomy Club landing page with a procedural low-poly plant that grows as visitors scroll, then harden the public API and production deployment before release.
+Create a fast, accessible Agronomy Club landing page with an image-led organic visual treatment, then harden the public API and production deployment before release.
+
+> **Design decision update — 19 September 2026:** The owner explicitly removed the Three.js requirement after the initial concept was approved. The WebGL design below is superseded. The implemented landing page uses responsive static photography, semantic HTML, and CSS motion only; it ships no Three.js runtime, canvas, or WebGL dependency.
 
 ## Landing page
 
-The homepage keeps all key information in semantic HTML, with a fixed WebGL canvas used only as the visual layer. The content column remains keyboard accessible and readable when WebGL is unavailable or reduced motion is enabled.
+The homepage keeps all key information in semantic HTML. Responsive photography and CSS provide the visual layer, while the content column remains keyboard accessible and readable with images or motion disabled.
 
-### Scene
+### Visual treatment
 
-- A Three.js scene mounts in a client-only `PlantScene` component.
-- A seedling starts at the base of the viewport. Scroll progress drives a clamped growth value from 0 to 1; a short initial interpolation avoids a blank first render.
-- The plant is generated from a small set of low-poly cylinders and tapered branch segments. Each branch has a configured growth threshold and its leaves use a delayed local interpolation so they appear after their supporting stem.
-- Leaves use simple faceted geometry and green `MeshStandardMaterial`; stems use a darker, rougher material. Ambient and directional lighting create soft depth without textures or remote asset requests.
-- The renderer uses device-pixel-ratio limits, a single requestAnimationFrame loop, resize-aware perspective camera, paused rendering when offscreen, and disposal of geometries, materials, renderer, and listeners during unmount.
-- The scene observes `prefers-reduced-motion`; it renders a complete, still plant and does not bind growth to scroll in that mode.
+- A responsive, locally optimised hero image provides the organic plant visual.
+- The visual decoration does not gate content or interaction.
+- CSS transitions honour `prefers-reduced-motion` and do not depend on scroll listeners or animation loops.
 
 ### Layout and interaction
 
-- The existing Agronomy Club title, mission, and sign-up/explore actions remain real HTML above the canvas.
-- On wide screens, content is a left-side editorial column and the plant occupies the right-side visual anchor. On mobile, the canvas becomes a restrained background behind a single-column content flow.
-- A lightweight loading state covers only the canvas until the renderer has produced its first frame.
+- The existing Agronomy Club title, mission, and sign-up/explore actions remain real HTML above the imagery.
+- On wide screens, content is a left-side editorial column and the image occupies the right-side visual anchor. On mobile, the layout becomes a single-column content flow.
 - The page uses a precise green, cream, and harvest-yellow design system already present in the project. No new decorative badges, fake metrics, or image text are introduced.
 
 ## Security changes
@@ -39,7 +37,7 @@ The deployment remains Docker Compose on a Linux host. GitHub Actions builds imm
 
 ## Validation
 
-- Frontend: TypeScript, ESLint, build, browser checks at desktop and mobile widths, reduced-motion behavior, scroll-growth behavior, and no-WebGL fallback.
+- Frontend: TypeScript, ESLint, build, browser checks at desktop and mobile widths, and reduced-motion behavior.
 - Backend: Django tests for public serializer privacy, production setting validation, and file validation.
 - Deployment: `docker compose config`, a reverse-proxy header check, and a manual image-tag release rehearsal.
 

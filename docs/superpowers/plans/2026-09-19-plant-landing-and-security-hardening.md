@@ -2,11 +2,13 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Deliver the approved Three.js plant landing page and security hardening.
+**Goal:** Deliver the approved image-led landing page and security hardening.
 
-**Architecture:** A client-only `PlantScene` owns its WebGL lifecycle and receives scroll progress from the homepage. Django uses public serializers without personal emails; production Compose and Django settings require explicit secure configuration.
+> **Status:** Tasks 1–3 recorded the original Three.js concept. They were superseded on 19 September 2026 when the owner directed that Three.js be removed. The released landing page uses responsive static imagery and CSS; no WebGL scene is an acceptance requirement. Tasks 4–6 remain the historical security and deployment checklist.
 
-**Tech Stack:** Next.js, React, TypeScript, Three.js, Tailwind CSS, Django, Docker Compose, Nginx.
+**Architecture:** The homepage uses responsive static imagery and CSS. Django uses public serializers without personal emails; production Compose and Django settings require explicit secure configuration.
+
+**Tech Stack:** Next.js, React, TypeScript, Tailwind CSS, Django, Docker Compose, Nginx.
 
 **Spec:** `docs/superpowers/specs/2026-09-19-plant-landing-and-security-design.md`
 

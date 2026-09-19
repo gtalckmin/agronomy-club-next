@@ -51,7 +51,7 @@ On 19 September 2026, the Next.js client was deployed from local source to this 
 - **Backend:** `agronomy-club-next-staging`
 - **Region:** `asia-southeast1`
 - **Staging URL:** `https://agronomy-club-next-staging--agronomy-club.asia-southeast1.hosted.app`
-- **Release source:** the `feat/plant-landing-security` branch, including commit `50c6f76`
+- **Release source:** the `feat/plant-landing-security` branch, including commit `4670595`.
 
 The deployment passed the production build, TypeScript, ESLint, Prettier, and production dependency-audit checks before the Firebase rollout. Firebase reported the rollout as successful, and the public staging URL returned HTTP 200 with the new landing page.
 
@@ -62,8 +62,8 @@ The staging Django API and database were provisioned on 19 September 2026:
 - **Cloud Run API:** `agronomy-club-api-staging` in `asia-southeast1`, with the generated staging URI `https://agronomy-club-api-staging-q7uvfi4yhq-as.a.run.app`.
 - **Cloud SQL:** `agronomy-club-postgres-staging`, PostgreSQL 16 Enterprise edition on the `db-f1-micro` tier, with a 10 GB SSD disk, zonal availability, automated backups, and point-in-time recovery.
 - **Database:** `agronomy_club`, reached only through the Cloud Run Cloud SQL socket. Its dedicated database password and the Django secret are separate Secret Manager secrets, each readable only by the dedicated `agronomy-club-api-staging` runtime service account.
-- **Release image:** `asia-southeast1-docker.pkg.dev/agronomy-club/agronomy-club/agronomy-club-api-staging:373d1ae`.
-- **Migration:** the `agronomy-club-migrate-staging` Cloud Run Job completed successfully. It must be run explicitly after future releases containing Django migrations.
+- **Release image:** `asia-southeast1-docker.pkg.dev/agronomy-club/agronomy-club/agronomy-club-api-staging:b4c3f2f`.
+- **Migration:** the `agronomy-club-migrate-staging` Cloud Run Job completed successfully after the release image and `FIREBASE_PROJECT_ID=agronomy-club` were applied. It must be run explicitly after future releases containing Django migrations.
 
 The first migration attempt exposed a project configuration issue: the Cloud SQL Admin API was disabled, which prevented the Cloud Run Cloud SQL socket from mounting. It was enabled and the identical migration job then completed successfully. This is recorded so the service is not disabled accidentally during future project cleanup.
 

@@ -33,7 +33,7 @@ FRONTEND_URL = (
     required_environment("FRONTEND_URL")
     if IS_PRODUCTION
     else os.environ.get("FRONTEND_URL", "http://localhost:3000")
-)
+).rstrip("/")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
