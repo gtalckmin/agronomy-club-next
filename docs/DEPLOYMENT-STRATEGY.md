@@ -71,6 +71,8 @@ The staging API permits public invocation so the Firebase browser client can rea
 
 ## Domain and routing
 
+The approved permanent Django Admin address is `https://admin.agronomyclub.org/admin/`. When provisioned, it routes directly to the production Cloud Run service and remains separate from Firebase Hosting so Django's session and CSRF cookies remain same-origin. See [ADMIN-ACCESS.md](ADMIN-ACCESS.md) for the required DNS, TLS, Cloud Run, verification, and staff-password recovery steps.
+
 The production domain should remain `www.agronomyclub.org`; redirect the apex `agronomyclub.org` to it. Connect the custom domain through Firebase after a staging rollout succeeds.
 
 The client should call the API through a single production HTTPS origin chosen during implementation:
