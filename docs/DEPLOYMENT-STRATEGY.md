@@ -55,7 +55,19 @@ On 19 September 2026, the Next.js client was deployed from local source to this 
 
 The deployment passed the production build, TypeScript, ESLint, Prettier, and production dependency-audit checks before the Firebase rollout. Firebase reported the rollout as successful, and the public staging URL returned HTTP 200 with the new landing page.
 
-This staging deployment does **not** replace the existing `agronomy-club.web.app` Firebase Hosting site or either public custom domain. It deploys the Next.js client only. The Django API, Cloud SQL database, media storage, and data migration remain separate work; pages that depend on live club data must not be treated as production-ready until that API is deployed and verified.
+This staging deployment does **not** replace the existing `agronomy-club.web.app` Firebase Hosting site or either public custom domain.
+
+The staging Django API and database were provisioned on 19 September 2026:
+
+- **Cloud Run API:** `agronomy-club-api-staging` in `asia-southeast1`, with the generated staging URI `https://agronomy-club-api-staging-q7uvfi4yhq-as.a.run.app`.
+- **Cloud SQL:** `agronomy-club-postgres-staging`, PostgreSQL 16 Enterprise edition on the `db-f1-micro` tier, with a 10 GB SSD disk, zonal availability, automated backups, and point-in-time recovery.
+- **Database:** `agronomy_club`, reached only through the Cloud Run Cloud SQL socket. Its dedicated database password and the Django secret are separate Secret Manager secrets, each readable only by the dedicated `agronomy-club-api-staging` runtime service account.
+- **Release image:** `asia-southeast1-docker.pkg.dev/agronomy-club/agronomy-club/agronomy-club-api-staging:373d1ae`.
+- **Migration:** the `agronomy-club-migrate-staging` Cloud Run Job completed successfully. It must be run explicitly after future releases containing Django migrations.
+
+The first migration attempt exposed a project configuration issue: the Cloud SQL Admin API was disabled, which prevented the Cloud Run Cloud SQL socket from mounting. It was enabled and the identical migration job then completed successfully. This is recorded so the service is not disabled accidentally during future project cleanup.
+
+The API remains private until its public-invoker policy is explicitly approved. That is the final prerequisite to connecting the public Firebase App Hosting staging frontend to it. Uploaded media is also not yet persistent because this repository has not yet been configured with Cloud Storage-backed Django storage; do not use staff administration to upload production media during this staging phase.
 
 ## Domain and routing
 
