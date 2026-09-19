@@ -1,214 +1,54 @@
-# Django + Next.js Template
+# Agronomy Club
 
-Django + Nextjs Template: Standardised CFC Tech Stack
+The public website and member services for Agronomy Club. It is a full-stack application maintained from this repository and deployed as container images.
 
----
+## What is here
 
-## Quick Start (Dev Container) - Recommended
+- `client/` — Next.js 16 and React 19 frontend.
+- `server/` — Django API, Django admin, and PostgreSQL models.
+- `docker/` — development and production container definitions, plus Nginx configuration.
+- `.github/workflows/` — frontend, backend, and container-image checks.
 
-The easiest way to get started is using the VS Code Dev Container:
+The main features are chapter profiles, events, resources, quizzes, alumni records, and member/chapter memberships. Detailed architecture and operational notes are in [docs/PROJECT.md](docs/PROJECT.md).
 
-1. **Prerequisites**:  
-   - [Docker Desktop](https://www.docker.com/products/docker-desktop/)  
-   - [VS Code](https://code.visualstudio.com/)  
-   - [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
+## Start developing
 
-2. **Open in Dev Container**:
-   - Clone this repository
-   - Open the project in VS Code
-   - When prompted, click "Reopen in Container" or use `Ctrl+Shift+P` → "Dev Containers: Reopen in Container"
+The recommended workflow is the Dev Container in VS Code. It provides the required Node, Python, Poetry, Docker, and database tooling.
 
-3. **Start the application**:
-   ```bash
-   # Terminal 1: Start the frontend
-   cd client && npm run dev
-
-   # Terminal 2: Start the backend
-   cd server && python manage.py runserver
-   ```
-
-4. **Access the application**:
-   - Frontend: [http://localhost:3000](http://localhost:3000)
-   - Backend API: [http://localhost:8000](http://localhost:8000)
-   - Admin panel: [http://localhost:8000/admin](http://localhost:8000/admin)
-
----
-## Local Development Setup
-
-**Note**: Only follow these steps if you're NOT using the dev container.
-
-### Prerequisites
-
-- **Node.js 18+** and **npm** - [Download here](https://nodejs.org/)
-- **Python 3.12+** - [Download here](https://python.org/)
-- **Poetry** (Python package manager) - [Installation guide](https://python-poetry.org/docs/#installation)
-- **Docker Desktop** - [Download here](https://www.docker.com/products/docker-desktop/)
-
-### Installation Steps
-
-#### 1. Clone the Repository
-```bash
-git clone <your-repo-url>
-cd <project-name>
-```
-
-#### 2. Install Prerequisites
-
-**Poetry (Python package manager)**
-```bash
-# Official installer (all OSes)
-curl -sSL https://install.python-poetry.org | python3 -
-
-# If that fails, use pip (all OSes)
-pip install poetry
-```
-
-#### 3. Set Up Environment Variables
-
-Before proceeding, create your environment files by copying the examples:
-```bash
-cp ./client/.env.example ./client/.env && cp ./server/.env.example ./server/.env
-```
-
-#### 4. Start the Database
+For a local setup, copy the example environment files, start PostgreSQL, then run the API and frontend in separate terminals:
 
 ```bash
-cd server && docker compose up -d
-```
+cp client/.env.example client/.env
+cp server/.env.example server/.env
 
-Note: Your terminal may not support the '&&' metacharacter e.g Powershell, so you can just do the commands individually
-
-**Backend (`.env` in `server/`)**
-```env
-APP_NAME=DjangoAPI
-APP_ENV=DEVELOPMENT
-API_SECRET_KEY=your-secret-key-here
-API_ALLOWED_HOSTS=.localhost 127.0.0.1 [::1]
-
-POSTGRES_HOST=localhost
-POSTGRES_NAME=your_db_name
-POSTGRES_USER=your_username
-POSTGRES_PASSWORD=your_password
-POSTGRES_PORT=5432
-
-DJANGO_SUPERUSER_PASSWORD=Password123
-DJANGO_SUPERUSER_EMAIL=admin@test.com
-DJANGO_SUPERUSER_USERNAME=admin
-
-FRONTEND_URL=http://localhost:3000
-```
-
-**Frontend (`.env` in `client/`)**
-```env
-NEXT_PUBLIC_BACKEND_URL=http://localhost:8000
-```
-
-#### 5. Set Up the Backend (Django)
-```bash
 cd server
+docker compose up -d
 poetry install
-
-#Get into a poetry venv
-eval $(poetry env activate) #Bash/Zsh/Csh
-Invoke-Expression (poetry env activate) #Powershell
-
-python manage.py migrate
-python manage.py createsuperuser  # optional
-python manage.py runserver
+poetry run python manage.py migrate
+poetry run python manage.py runserver
 ```
 
-#### 6. Set Up the Frontend (Next.js)
 ```bash
 cd client
-npm install
+npm ci
 npm run dev
 ```
 
-#### 7. Verify Installation
-- Frontend: [http://localhost:3000](http://localhost:3000)
-- Backend API: [http://localhost:8000](http://localhost:8000)
-- Admin panel: [http://localhost:8000/admin](http://localhost:8000/admin)
+The frontend runs at `http://localhost:3000`; Django, its API, and its admin interface run at `http://localhost:8000`.
 
----
-
-## Development Commands
-
-### Backend (Django)
-```bash
-cd server
-
-# Run development server
-python manage.py runserver
-
-# Create migrations
-python manage.py makemigrations
-
-# Apply migrations
-python manage.py migrate
-
-# Create superuser
-python manage.py createsuperuser
-
-# Run tests
-python manage.py test
-
-# Reset database (nuclear option)
-./nuke.sh
-```
-
-### Frontend (Next.js)
-```bash
-cd client
-
-# Development server
-npm run dev
-
-# Build for production
-npm run build
-
-# Start production server
-npm start
-
-# Run linting
-npm run lint
-
-# Fix linting issues
-npm run lint:fix
-
-# Type checking
-npm run typecheck
-
-# Format code
-npm run format
-```
-
----
-
-## Server
-
-### Create and run migrations
-
-If the models are updated, be sure to create a migration:
+## Checks
 
 ```bash
-python manage.py makemigrations # create migration
-python manage.py migrate # apply migrations
+cd client && npm run format:check && npm run lint && npm run typecheck
+cd server && poetry run python manage.py test
 ```
 
-### Nuke the DB
+## Production
 
-If you run into migration conflicts that you can't be bothered to fix, run `nuke.sh` to clear your database. Then, run migrations again.
+Pushing to `main` builds and publishes frontend and backend images to GitHub Container Registry. The production Compose file is [docker-compose.prod.yml](docker-compose.prod.yml) and is configured for this fork's image names; configure a private `.env.prod` on the host from `.env.prod.example` before deploying.
 
-## Other
+## Repository relationships
 
-### Update Dependencies
+This repository is a fork of [codersforcauses/agronomy-club](https://github.com/codersforcauses/agronomy-club). The former Firebase/Next.js site is preserved separately at [gtalckmin/Agronomy-Club](https://github.com/gtalckmin/Agronomy-Club); it is not the deployment source for this application.
 
-You can run `npm install` and `poetry install` in the respective `client` and `server` folders to install the newest dependencies.
-
-### Editing Docker stuff
-
-If you modify anything in the `docker` folder, you need to add the `--build` flag or Docker won't give you the latest changes.
-
-### Changing env vars
-
-Edit the `.env` file in the respective directory (client or server).
+See [AGENTS.md](AGENTS.md) for agent and contributor operating rules.
