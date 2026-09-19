@@ -1,6 +1,6 @@
 # Firebase and Google Cloud deployment strategy
 
-**Status:** Proposed architecture. It records the intended path for this fork; it does not provision cloud resources, alter DNS, or publish a release.
+**Status:** The isolated App Hosting staging backend is configured for a local-source rollout. The document records the production architecture; it does not authorise a custom-domain cutover or production data migration.
 
 ## Why this changes the deployment model
 
@@ -82,7 +82,7 @@ Do not export service-account keys, production credentials, or an unreviewed Fir
 
 ### 2. Build the cloud deployment configuration
 
-- Create an App Hosting configuration with `client/` as its application root and a non-production branch/environment for staging.
+- Create an App Hosting configuration with `client/` as its application root and a non-production branch/environment for staging. The committed `firebase.json` targets the `agronomy-club-next-staging` backend; deploy it with `firebase deploy --only apphosting:agronomy-club-next-staging --project agronomy-club`.
 - Adapt the Django container for Cloud Run: listen on the platform-provided port, run migrations as a controlled release step, and do not create an administrator account automatically at every boot.
 - Create a Cloud SQL PostgreSQL instance and least-privilege database user in the same region as Cloud Run.
 - Store `API_SECRET_KEY`, database credentials, and any administrator bootstrap secret in Secret Manager; grant each runtime service only the access it requires.
