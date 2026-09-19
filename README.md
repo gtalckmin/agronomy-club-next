@@ -9,7 +9,7 @@ The public website and member services for Agronomy Club. It is a full-stack app
 - `docker/` — development and production container definitions, plus Nginx configuration.
 - `.github/workflows/` — frontend, backend, and container-image checks.
 
-The main features are chapter profiles, events, resources, quizzes, alumni records, and member/chapter memberships. Detailed architecture and operational notes are in [docs/PROJECT.md](docs/PROJECT.md).
+The main features are chapter profiles, events, resources, quizzes, alumni records, and member/chapter memberships. Detailed architecture and operational notes are in [docs/PROJECT.md](docs/PROJECT.md). The proposed move from the former Firebase deployment to managed Firebase and Google Cloud services is documented in [docs/DEPLOYMENT-STRATEGY.md](docs/DEPLOYMENT-STRATEGY.md).
 
 ## Start developing
 
@@ -43,9 +43,11 @@ cd client && npm run format:check && npm run lint && npm run typecheck
 cd server && poetry run python manage.py test
 ```
 
-## Production
+## Current container release path
 
 Pushing to `main` builds and publishes frontend and backend images to GitHub Container Registry. The production Compose file is [docker-compose.prod.yml](docker-compose.prod.yml) and is configured for this fork's image names; configure a private `.env.prod` on the host from `.env.prod.example` before deploying.
+
+The recommended managed production architecture is Firebase App Hosting for the Next.js client, Cloud Run for Django, and Cloud SQL for PostgreSQL. This is not implemented by the Compose file; see [the deployment strategy](docs/DEPLOYMENT-STRATEGY.md) before provisioning production infrastructure.
 
 ## Repository relationships
 

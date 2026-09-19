@@ -23,13 +23,13 @@ Next.js renders the public content and uses React Query hooks to fetch data. Dja
 
 ## Domain model
 
-| Area | Django model | Notes |
-| --- | --- | --- |
-| Chapters | `Chapter` | Club name, branding, location, email, and events/resources relation. |
-| Events | `Event` | Chapter-owned title, description, date, location, thumbnail, and optional link. |
-| Resources | `Resource`, `ResourceTypeTag` | Public/private chapter resources with filters. |
-| Quizzes | `Quiz` | Chapter-owned JSON quiz uploads, with public visibility. |
-| People | `User`, `ChapterMembership` | Alumni/member profile, global role, chapter role, and committee position. |
+| Area      | Django model                  | Notes                                                                           |
+| --------- | ----------------------------- | ------------------------------------------------------------------------------- |
+| Chapters  | `Chapter`                     | Club name, branding, location, email, and events/resources relation.            |
+| Events    | `Event`                       | Chapter-owned title, description, date, location, thumbnail, and optional link. |
+| Resources | `Resource`, `ResourceTypeTag` | Public/private chapter resources with filters.                                  |
+| Quizzes   | `Quiz`                        | Chapter-owned JSON quiz uploads, with public visibility.                        |
+| People    | `User`, `ChapterMembership`   | Alumni/member profile, global role, chapter role, and committee position.       |
 
 ## Local environment
 
@@ -48,9 +48,9 @@ The repository checks frontend Prettier, ESLint, and TypeScript; backend Flake8;
 
 Use `npm ci`, rather than `npm install`, for reproducible frontend dependency installation. Poetry manages Python dependencies through `server/pyproject.toml` and `server/poetry.lock`.
 
-## Deployment model
+## Current container deployment model
 
-The deployment workflow builds both client and server images on each push to `main`. Images are published to this fork's GHCR namespace. A production host runs `docker-compose.prod.yml`, which starts PostgreSQL, the API, frontend, Nginx, and Watchtower.
+The deployment workflow builds both client and server images on each push to `main`. Images are published to this fork's GHCR namespace. The checked-in Compose configuration is for a self-managed host, where it starts PostgreSQL, the API, frontend, and Nginx.
 
 Before the first production deployment:
 
@@ -58,6 +58,8 @@ Before the first production deployment:
 2. Configure the production domain in `API_ALLOWED_HOSTS`, `FRONTEND_URL`, and the frontend backend URL.
 3. Provision TLS certificates and verify the Nginx configuration and domain routing.
 4. Run database migrations and create an administrator account on the production environment.
+
+This is not the recommended long-term production architecture. The approved direction is to retain the Agronomy Club Firebase/Google Cloud estate, serve the Next.js client with Firebase App Hosting, deploy the Django API to Cloud Run, and use Cloud SQL for PostgreSQL. The migration approach, routing decision, verification steps, and required account access are in [DEPLOYMENT-STRATEGY.md](DEPLOYMENT-STRATEGY.md).
 
 ## Legacy migration boundaries
 
