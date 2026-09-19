@@ -12,6 +12,11 @@ const isWindowsDevContainer = () =>
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  experimental: {
+    // Next 16.3's CLI checker cannot capture TypeScript output in this runtime.
+    // TypeScript 5 still exposes the compiler API, which keeps build checks enabled.
+    useTypeScriptCli: false,
+  },
   turbopack: {
     root: projectRoot,
   },

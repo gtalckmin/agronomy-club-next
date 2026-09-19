@@ -67,7 +67,7 @@ The staging Django API and database were provisioned on 19 September 2026:
 
 The first migration attempt exposed a project configuration issue: the Cloud SQL Admin API was disabled, which prevented the Cloud Run Cloud SQL socket from mounting. It was enabled and the identical migration job then completed successfully. This is recorded so the service is not disabled accidentally during future project cleanup.
 
-The API remains private until its public-invoker policy is explicitly approved. That is the final prerequisite to connecting the public Firebase App Hosting staging frontend to it. Uploaded media is also not yet persistent because this repository has not yet been configured with Cloud Storage-backed Django storage; do not use staff administration to upload production media during this staging phase.
+The staging API permits public invocation so the Firebase browser client can reach public club data. Django's exact allowed-host and CORS settings restrict browser origins to the staging App Hosting URL; Django Admin continues to require a staff login. The App Hosting configuration points `NEXT_PUBLIC_BACKEND_URL` at the generated Cloud Run staging API URL. Uploaded media is not yet persistent because this repository has not yet been configured with Cloud Storage-backed Django storage; do not use staff administration to upload production media during this staging phase.
 
 ## Domain and routing
 
