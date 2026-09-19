@@ -4,9 +4,10 @@ steps:
     args:
       - build
       - --file=docker/server/Dockerfile
-      - --tag=$_IMAGE_URI:$COMMIT_SHA
+      - --tag=$_IMAGE_URI:$_IMAGE_TAG
       - .
 images:
-  - $_IMAGE_URI:$COMMIT_SHA
+  - $_IMAGE_URI:$_IMAGE_TAG
 substitutions:
   _IMAGE_URI: asia-southeast1-docker.pkg.dev/agronomy-club/agronomy-club/agronomy-club-api-prod
+  _IMAGE_TAG: unreleased
