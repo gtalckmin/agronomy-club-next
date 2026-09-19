@@ -1,13 +1,26 @@
 import os from "node:os";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 import isInsideContainer from "is-inside-container";
+
+const projectRoot = path.dirname(fileURLToPath(import.meta.url));
 
 const isWindowsDevContainer = () =>
   os.release().toLowerCase().includes("microsoft") && isInsideContainer();
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: "export",
   reactStrictMode: true,
+  experimental: {
+    // Next 16.3's CLI checker cannot capture TypeScript output in this runtime.
+    // TypeScript 5 still exposes the compiler API, which keeps build checks enabled.
+    useTypeScriptCli: false,
+  },
+  turbopack: {
+    root: projectRoot,
+  },
   // dumb fix for windows docker
   webpack: isWindowsDevContainer()
     ? (config) => {
@@ -19,16 +32,8 @@ const nextConfig = {
       }
     : undefined,
 
-  async rewrites() {
-    return [
-      {
-        source: "/quizzes/download/:id",
-        destination: `${process.env.NEXT_PUBLIC_BACKEND_URL}/quizzes/download/:id/`,
-      },
-    ];
-  },
-
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: "http",

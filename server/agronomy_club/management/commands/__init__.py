@@ -1,0 +1,1 @@
+"""Agronomy Club management commands."""

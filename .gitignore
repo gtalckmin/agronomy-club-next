@@ -128,6 +128,8 @@ celerybeat.pid
 # Environments
 .env.local
 .env
+/client/.env.production
+.firebase/
 .venv
 env/
 venv/

@@ -4,35 +4,71 @@ services:
     restart: unless-stopped
     volumes:
       - ./data/db:/var/lib/postgresql/data
-    env_file: ./.env.prod
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?Set POSTGRES_DB in .env.prod}
+      POSTGRES_USER: ${POSTGRES_USER:?Set POSTGRES_USER in .env.prod}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env.prod}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
       interval: 3s
       timeout: 3s
       retries: 5
 
   server:
-    image: ghcr.io/gtalckmin/agronomy-club-next-prod-server:latest
+    image: ${SERVER_IMAGE:?Set SERVER_IMAGE to an immutable image digest in .env.prod}
     restart: unless-stopped
-    env_file: ./.env.prod
     ports:
-      - 8081:8081
+      - 127.0.0.1:8081:8081
     entrypoint: /entrypoint.sh
     volumes:
       - ./opt/accesslogs/:/var/log/accesslogs/
       - ./opt/static_files:/app/static_files
     environment:
-      - DJANGO_SETTINGS_MODULE=api.settings
+      APP_ENV: ${APP_ENV:?Set APP_ENV in .env.prod}
+      DJANGO_SETTINGS_MODULE: api.settings
+      PORT: "8081"
+      API_SECRET_KEY: ${API_SECRET_KEY:?Set API_SECRET_KEY in .env.prod}
+      API_ALLOWED_HOSTS: ${API_ALLOWED_HOSTS:?Set API_ALLOWED_HOSTS in .env.prod}
+      FIREBASE_PROJECT_ID: ${FIREBASE_PROJECT_ID:?Set FIREBASE_PROJECT_ID in .env.prod}
+      FRONTEND_URL: ${FRONTEND_URL:?Set FRONTEND_URL in .env.prod}
+      POSTGRES_HOST: ${POSTGRES_HOST:?Set POSTGRES_HOST in .env.prod}
+      POSTGRES_NAME: ${POSTGRES_NAME:?Set POSTGRES_NAME in .env.prod}
+      POSTGRES_USER: ${POSTGRES_USER:?Set POSTGRES_USER in .env.prod}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env.prod}
+      POSTGRES_PORT: ${POSTGRES_PORT:?Set POSTGRES_PORT in .env.prod}
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+
+  migrate:
+    image: ${SERVER_IMAGE:?Set SERVER_IMAGE to an immutable image digest in .env.prod}
+    profiles: ["release"]
+    restart: "no"
+    entrypoint: ["python", "manage.py", "migrate", "--noinput"]
+    environment:
+      APP_ENV: ${APP_ENV:?Set APP_ENV in .env.prod}
+      DJANGO_SETTINGS_MODULE: api.settings
+      API_SECRET_KEY: ${API_SECRET_KEY:?Set API_SECRET_KEY in .env.prod}
+      API_ALLOWED_HOSTS: ${API_ALLOWED_HOSTS:?Set API_ALLOWED_HOSTS in .env.prod}
+      FIREBASE_PROJECT_ID: ${FIREBASE_PROJECT_ID:?Set FIREBASE_PROJECT_ID in .env.prod}
+      FRONTEND_URL: ${FRONTEND_URL:?Set FRONTEND_URL in .env.prod}
+      POSTGRES_HOST: ${POSTGRES_HOST:?Set POSTGRES_HOST in .env.prod}
+      POSTGRES_NAME: ${POSTGRES_NAME:?Set POSTGRES_NAME in .env.prod}
+      POSTGRES_USER: ${POSTGRES_USER:?Set POSTGRES_USER in .env.prod}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env.prod}
+      POSTGRES_PORT: ${POSTGRES_PORT:?Set POSTGRES_PORT in .env.prod}
+    depends_on:
+      db:
+        condition: service_healthy
 
   client:
-    image: ghcr.io/gtalckmin/agronomy-club-next-prod-client:latest
+    image: ${CLIENT_IMAGE:?Set CLIENT_IMAGE to an immutable image digest in .env.prod}
     restart: unless-stopped
-    env_file: ./.env.prod
     ports:
-      - 3000:3000
+      - 127.0.0.1:3000:3000
     entrypoint: /entrypoint.sh
+    environment:
+      APP_ENV: ${APP_ENV:?Set APP_ENV in .env.prod}
     depends_on:
       - server
 
@@ -46,13 +82,7 @@ services:
     volumes:
       - ./docker/nginx/custom.conf:/etc/nginx/nginx.conf
       - ./opt/static_files:/opt/static_files/
+      - ./opt/tls:/etc/nginx/tls:ro
     depends_on:
       - server
       - client
-
-  watchtower:
-    image: containrrr/watchtower:latest
-    restart: unless-stopped
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    command: --interval 30

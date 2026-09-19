@@ -10,8 +10,8 @@ export function Footer() {
               Agronomy Club
             </h2>
             <p className="mt-6 max-w-xs text-sm/6 text-brand-surface">
-              Dedicated to the science of soil management and crop production
-              for a sustainable world.
+              Agronomy Club - <em>Primum vivere deinde philosophari.</em>{" "}
+              Dedicated to my father.
             </p>
           </div>
           <div>

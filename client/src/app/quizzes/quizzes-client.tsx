@@ -31,7 +31,7 @@ export default function QuizzesClient() {
               chapter={quiz.chapterName}
               chapterColor={quiz.chapterColour}
               uploadDate={quiz.upload_date}
-              downloadUrl={`/quizzes/download/${quiz.id}`}
+              downloadUrl={`${process.env.NEXT_PUBLIC_BACKEND_URL}/quizzes/download/${quiz.id}/`}
             />
           </div>
         ))

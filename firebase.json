@@ -1,0 +1,40 @@
+{
+  "$schema": "https://raw.githubusercontent.com/firebase/firebase-tools/master/schema/firebase-config.json",
+  "hosting": {
+    "site": "agronomy-club",
+    "public": "client/out",
+    "cleanUrls": true,
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**",
+      "node_modules",
+      ".next",
+      "firebase-debug.log",
+      "firebase-debug.*.log"
+    ],
+    "redirects": [
+      {
+        "source": "/chapters/:id",
+        "destination": "/chapters?chapter=:id",
+        "type": 301
+      }
+    ]
+  },
+  "apphosting": [
+    {
+      "backendId": "agronomy-club-next-staging",
+      "rootDir": "./client",
+      "ignore": [
+        ".git",
+        ".env",
+        ".env.*",
+        "node_modules",
+        "client/node_modules",
+        "client/.next",
+        "firebase-debug.log",
+        "firebase-debug.*.log"
+      ]
+    }
+  ]
+}

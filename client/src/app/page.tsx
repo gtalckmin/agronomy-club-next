@@ -1,105 +1,114 @@
-"use client";
-
+import { ArrowUpRight, BookOpen, CalendarDays, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-import { Button } from "../components/ui/button";
+import { Button } from "@/components/ui/button";
+
+const pathways = [
+  {
+    icon: BookOpen,
+    title: "Learn together",
+    text: "Practical resources and shared knowledge for every growing season.",
+  },
+  {
+    icon: CalendarDays,
+    title: "Show up",
+    text: "Field days, conversations, and events that connect people to place.",
+  },
+  {
+    icon: Users,
+    title: "Grow a network",
+    text: "A welcoming community for students, alumni, and industry.",
+  },
+];
 
 export default function Home() {
   return (
-    <main className="relative flex min-h-screen w-full flex-col overflow-hidden bg-brand-surface">
-      <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-        <div className="absolute left-1/2 top-0 w-full min-w-[1440px] max-w-[1920px] -translate-x-1/2">
-          <svg
-            className="h-auto w-full"
-            viewBox="0 0 1433 989"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M485.659 8.82178C518.374 76.4251 582.571 123.56 657.143 134.729L701.818 141.42C746.657 148.136 806.488 140.195 861.063 124.023C928.721 103.975 981.547 54.3412 1026.95 0.321777M1437.95 542.822L1401.6 591.751C1349.32 662.128 1275.13 713.126 1190.69 736.718L1173.73 741.455C1158.59 745.688 1143.04 748.332 1127.34 749.345L1099.78 751.123C1053.41 754.115 1007.94 737.343 974.615 704.957C950.736 681.748 934.467 651.835 927.963 619.177L916.938 563.82C910.466 531.323 899.635 499.705 881.175 472.189C849.304 424.682 790.683 351.476 719.639 328.176L712.24 325.749C651.667 305.883 587.03 301.571 524.334 313.212L428.991 330.915C404.661 333.118 382.615 335.115 361.877 336.993C222.134 349.648 85.6775 289.747 0.396973 178.322"
-              stroke="#F4B643"
-            />
-          </svg>
-        </div>
-      </div>
-
-      <div className="relative z-10 flex flex-1 flex-col justify-center md:flex-row md:items-start">
-        <div className="flex w-full flex-col gap-6 px-6 py-12 sm:px-12 md:w-3/5 md:py-14 md:pl-12 lg:pl-16 lg:pr-8 xl:pl-24">
-          <h1 className="font-serif text-6xl font-bold text-brand-green-dark lg:text-7xl xl:text-8xl">
-            Agronomy Club<span className="text-brand-yellow">.</span>
-          </h1>
-
-          <p className="max-w-xl pt-8 text-lg text-brand-brown">
-            We equip students, researchers, and professionals with the tools,
-            community, and inspiration to transform global food systems through
-            precision and passion.
-          </p>
-
-          <div className="mt-2 flex gap-6">
-            <Button
-              asChild
-              className="h-12 bg-brand-green px-8 text-base font-semibold text-brand-surface hover:bg-brand-yellow hover:text-brand-brown"
-            >
-              <Link href="/signup">Sign Up</Link>
-            </Button>
-            <Button
-              variant="outline"
-              className="h-12 border-2 border-brand-green bg-transparent px-8 text-base font-semibold text-brand-green hover:bg-brand-green/30 hover:text-brand-green"
-            >
-              <Link href="/about" className="text-brand-green">
-                Explore
-              </Link>
-            </Button>
-          </div>
-        </div>
-
-        <div className="relative mt-12 flex w-full justify-end md:w-2/5">
-          <svg className="absolute h-0 w-0">
-            <defs>
-              <clipPath
-                id="figma-mask"
-                clipPathUnits="objectBoundingBox"
-                transform="scale(0.0017094, 0.0011792)"
+    <main className="overflow-hidden bg-brand-surface">
+      <section className="relative isolate border-b border-brand-green/15 px-6 py-16 sm:px-12 lg:min-h-[calc(100vh-4rem)] lg:px-16 lg:py-24">
+        <div className="absolute inset-y-0 right-0 -z-10 hidden w-[52%] bg-brand-green-dark lg:block" />
+        <div className="absolute right-[18%] top-0 -z-10 hidden h-32 w-32 rounded-b-full bg-brand-yellow lg:block" />
+        <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[1.05fr_.95fr] lg:gap-20">
+          <div className="max-w-2xl">
+            <p className="font-plex-mono text-xs font-bold uppercase tracking-[.22em] text-brand-green">
+              Agriculture for a changing world
+            </p>
+            <h1 className="mt-7 font-serif text-5xl font-bold leading-[.98] tracking-tight text-brand-green-dark sm:text-7xl xl:text-8xl">
+              Rooted in knowledge.
+              <br />
+              <span className="text-brand-yellow">Growing</span> together.
+            </h1>
+            <p className="mt-8 max-w-xl text-lg leading-8 text-brand-brown sm:text-xl">
+              Agronomy Club brings together the people shaping resilient food
+              systems, from first-year students to experienced practitioners.
+            </p>
+            <div className="mt-10 flex flex-wrap gap-4">
+              <Button
+                asChild
+                className="h-12 rounded-full bg-brand-green px-7 text-base hover:bg-brand-green-dark"
               >
-                <path d="M583.907 685.5V731.5V820.5C583.907 823.053 334.276 838.381 199.253 846.485C145.536 849.708 93.199 829.587 55.3366 791.346C-5.55713 729.843 -16.3837 634.629 29.1475 561.025L63.1796 506.01C104.321 439.503 97.0485 353.898 45.2773 295.284C-55.8609 180.778 25.4379 0.5 178.214 0.5H583.907V685.5Z" />
-              </clipPath>
-            </defs>
-          </svg>
-
-          <div className="relative aspect-[585/848] w-full max-w-[360px] md:max-w-[410px] lg:max-w-[440px] xl:max-w-[510px]">
-            <div
-              className="absolute inset-0 z-10"
-              style={{ clipPath: "url(#figma-mask)" }}
-            >
+                <Link href="/sign-up">
+                  Become a member <ArrowUpRight className="size-4" />
+                </Link>
+              </Button>
+              <Button
+                asChild
+                variant="outline"
+                className="h-12 rounded-full border-2 border-brand-green bg-transparent px-7 text-base text-brand-green hover:bg-brand-green/10"
+              >
+                <Link href="/events">Find an event</Link>
+              </Button>
+            </div>
+          </div>
+          <div className="relative mx-auto w-full max-w-md lg:max-w-none">
+            <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] border-8 border-brand-surface shadow-2xl shadow-black/20">
               <Image
                 src="/PlantPhotoAgronomy.jpeg"
-                alt="Agronomy Plants"
+                alt="A thriving crop in an Agronomy Club field"
                 fill
-                sizes="(max-width: 360px) 100vw, (max-width: 767px) 360px, (max-width: 1023px) 410px, (max-width: 1279px) 440px, 510px"
-                className="object-cover"
                 priority
+                sizes="(max-width: 1024px) 90vw, 42vw"
+                className="object-cover"
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-brand-green-dark/65 via-transparent to-transparent" />
+              <p className="absolute bottom-7 left-7 max-w-[14rem] font-serif text-3xl leading-tight text-white">
+                Start close to the soil.
+              </p>
             </div>
-
-            <div className="pointer-events-none absolute -left-[10%] top-[2%] z-10 h-[110%] w-[40%]">
-              <svg
-                className="h-full w-full"
-                viewBox="0 0 220 730"
-                preserveAspectRatio="xMaxYMid meet"
-                fill="none"
-              >
-                <path
-                  d="M66.0305 5.00146C2.79761 33.395 -13.7204 115.576 33.6311 166.196L92.8571 229.511C151.477 292.178 151.466 389.564 92.8319 452.218L37.7316 511.096C-1.43937 552.952 -5.95604 616.518 26.9031 663.492C52.5331 700.132 96.2436 719.698 140.644 714.406L196.031 707.804"
-                  stroke="#F4B643"
-                  strokeWidth="10"
-                  strokeLinecap="round"
-                />
-              </svg>
+            <div className="absolute -bottom-6 -left-5 rounded-2xl bg-brand-yellow px-6 py-5 text-brand-brown shadow-xl">
+              <p className="font-plex-mono text-xs font-bold uppercase tracking-wider">
+                Open to everyone
+              </p>
+              <p className="mt-1 text-sm font-semibold">Learn. Share. Grow.</p>
             </div>
           </div>
         </div>
-      </div>
+      </section>
+      <section className="mx-auto max-w-7xl px-6 py-20 sm:px-12 lg:px-16">
+        <div className="grid gap-10 lg:grid-cols-[.8fr_1.2fr]">
+          <div>
+            <p className="font-plex-mono text-xs font-bold uppercase tracking-[.2em] text-brand-green">
+              Find your place
+            </p>
+            <h2 className="mt-5 font-serif text-4xl leading-tight text-brand-green-dark sm:text-5xl">
+              The club for curious growers.
+            </h2>
+          </div>
+          <div className="grid gap-px overflow-hidden rounded-3xl border border-brand-green/20 bg-brand-green/20 sm:grid-cols-3">
+            {pathways.map(({ icon: Icon, title, text }) => (
+              <article key={title} className="bg-brand-surface p-7">
+                <Icon className="size-6 text-brand-yellow" />
+                <h3 className="mt-12 text-xl font-bold text-brand-green-dark">
+                  {title}
+                </h3>
+                <p className="mt-3 text-sm leading-6 text-brand-brown">
+                  {text}
+                </p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
     </main>
   );
 }

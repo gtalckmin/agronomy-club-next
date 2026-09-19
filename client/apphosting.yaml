@@ -1,0 +1,28 @@
+# Firebase App Hosting configuration for the Next.js client.
+# The Django API is deployed separately to Cloud Run at this public endpoint.
+env:
+  - variable: NEXT_PUBLIC_BACKEND_URL
+    value: https://agronomy-club-api-staging-q7uvfi4yhq-as.a.run.app/api
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: NEXT_PUBLIC_FIREBASE_API_KEY
+    value: AIzaSyClzqWMsv8X1sdulKUIWj3WlQMca5b4420
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+    value: agronomy-club.firebaseapp.com
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+    value: agronomy-club
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: NEXT_PUBLIC_FIREBASE_APP_ID
+    value: 1:869412139245:web:b352b6c45fc9006a85dce4
+    availability:
+      - BUILD
+      - RUNTIME

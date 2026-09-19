@@ -1,0 +1,13 @@
+# Builds the Django API only. Deployment uses the resulting immutable digest.
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - --file=docker/server/Dockerfile
+      - --tag=$_IMAGE_URI:$_IMAGE_TAG
+      - .
+images:
+  - $_IMAGE_URI:$_IMAGE_TAG
+substitutions:
+  _IMAGE_URI: asia-southeast1-docker.pkg.dev/agronomy-club/agronomy-club/agronomy-club-api-prod
+  _IMAGE_TAG: unreleased

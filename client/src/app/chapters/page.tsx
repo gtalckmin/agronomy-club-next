@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
 import ChaptersClient from "./page-client";
 
@@ -17,7 +18,9 @@ export default function ChaptersPage() {
           Chapters &amp; Field Alliances
         </h1>
       </header>
-      <ChaptersClient />
+      <Suspense fallback={<p className="mt-12">Loading all Chapters...</p>}>
+        <ChaptersClient />
+      </Suspense>
     </section>
   );
 }

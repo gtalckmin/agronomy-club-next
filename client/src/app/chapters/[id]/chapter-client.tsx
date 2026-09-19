@@ -1,7 +1,6 @@
 "use client";
 
 import { Mail, MapPin } from "lucide-react";
-import { notFound, useParams } from "next/navigation";
 import type { ReactNode } from "react";
 
 import { CommitteeMemberCard } from "@/components/committee-member-card";
@@ -35,9 +34,8 @@ function SectionHeading({
   );
 }
 
-export default function ChapterClient() {
-  const { id } = useParams();
-  const { data: chapter, isPending, error } = useChapter(id, "exec");
+export default function ChapterClient({ chapterId }: { chapterId: string }) {
+  const { data: chapter, isPending, error } = useChapter(chapterId, "exec");
 
   if (isPending) {
     return (
@@ -45,10 +43,6 @@ export default function ChapterClient() {
         <p>Loading chapter...</p>
       </main>
     );
-  }
-
-  if (error?.response?.status === 404) {
-    notFound();
   }
 
   if (error || !chapter) {
