@@ -16,7 +16,7 @@ services:
     restart: unless-stopped
     env_file: ./.env.prod
     ports:
-      - 8081:8081
+      - 127.0.0.1:8081:8081
     entrypoint: /entrypoint.sh
     volumes:
       - ./opt/accesslogs/:/var/log/accesslogs/
@@ -31,7 +31,7 @@ services:
     restart: unless-stopped
     env_file: ./.env.prod
     ports:
-      - 3000:3000
+      - 127.0.0.1:3000:3000
     entrypoint: /entrypoint.sh
     depends_on:
       - server
@@ -49,10 +49,3 @@ services:
     depends_on:
       - server
       - client
-
-  watchtower:
-    image: containrrr/watchtower:latest
-    restart: unless-stopped
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    command: --interval 30

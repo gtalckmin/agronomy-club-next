@@ -48,7 +48,6 @@ class AlumniSerializer(serializers.ModelSerializer):
             'full_name',
             'grad_yr',
             'discipline',
-            'email',
             'photo',
             'chapters',
         ]
@@ -99,7 +98,6 @@ class ListedChapterSerializer(serializers.ModelSerializer):
 
 class CommitteeSerializer(serializers.ModelSerializer):
     full_name = serializers.CharField(source="user_id.full_name")
-    email = serializers.CharField(source="user_id.email")
     photo = serializers.SerializerMethodField()
 
     class Meta:
@@ -107,7 +105,6 @@ class CommitteeSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "full_name",
-            "email",
             "position",
             "photo"
         ]

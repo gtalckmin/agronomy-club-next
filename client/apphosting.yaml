@@ -1,0 +1,8 @@
+# Firebase App Hosting configuration for the Next.js client.
+# The Django API is deployed separately to Cloud Run at this public endpoint.
+env:
+  - variable: NEXT_PUBLIC_BACKEND_URL
+    value: https://api.agronomyclub.org/api
+    availability:
+      - BUILD
+      - RUNTIME

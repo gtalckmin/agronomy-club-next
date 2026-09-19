@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
 import EventsClient from "./events-client";
 
@@ -17,7 +18,9 @@ export default function EventsPage() {
           Events
         </h1>
       </header>
-      <EventsClient />
+      <Suspense fallback={<p className="mt-4 px-6">Loading all Events...</p>}>
+        <EventsClient />
+      </Suspense>
     </section>
   );
 }
