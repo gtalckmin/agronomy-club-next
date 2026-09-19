@@ -233,7 +233,7 @@ git commit -m "docs: add reproducible Firebase Hosting release"
 
 **Interfaces:**
 - Produces: Cloud SQL instance `agronomy-club-postgres-prod`, Cloud Run service `agronomy-club-api-prod`, migration job `agronomy-club-migrate-prod`, and importer job `agronomy-club-import-firestore-members-prod` in `asia-southeast1`.
-- Produces: Secret Manager secrets `agronomy-club-api-prod-secret` and `agronomy-club-postgres-prod-password`, readable only by `agronomy-club-api-prod@agronomy-club.iam.gserviceaccount.com`.
+- Produces: Secret Manager secrets `agronomy-club-api-prod-secret` and `agronomy-club-postgres-prod-password`, readable by the production API service account and the separate importer service account only.
 - Consumes: a pinned API image digest from Artifact Registry and Cloud SQL Unix socket `/cloudsql/agronomy-club:asia-southeast1:agronomy-club-postgres-prod`.
 
 - [ ] **Step 1: Write a deploy configuration validation check.**
@@ -257,7 +257,7 @@ gcloud secrets create agronomy-club-api-prod-secret --replication-policy=automat
 gcloud secrets create agronomy-club-postgres-prod-password --replication-policy=automatic --project=agronomy-club
 ```
 
-Generate each secret locally in command memory, add it through stdin without echoing it, grant the runtime service account `roles/secretmanager.secretAccessor` only on the two secret resources, grant `roles/cloudsql.client`, and grant the importer job `roles/datastore.user` at project scope. Create a database user and password before deploying the service. Record IAM policy bindings without values in `docs/PRODUCTION-RELEASE.md`.
+Generate each secret locally in command memory, add it through stdin without echoing it, grant the runtime service account `roles/secretmanager.secretAccessor` only on the two secret resources, and grant `roles/cloudsql.client`. Use a separate importer service account for the Cloud Run import job; grant it access to the same two secrets and Cloud SQL, then obtain an explicitly approved, temporary read-only Firestore permission for the import. Create a database user and password before deploying the service. Record IAM policy bindings without values in `docs/PRODUCTION-RELEASE.md`.
 
 - [ ] **Step 4: Build, deploy, migrate, and test the API.**
 

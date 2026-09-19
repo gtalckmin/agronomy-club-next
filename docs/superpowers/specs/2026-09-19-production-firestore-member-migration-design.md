@@ -64,7 +64,7 @@ The importer is idempotent and conservative:
 
 ## Security and operational controls
 
-- The production Cloud Run runtime service account has only Cloud SQL Client, Secret Manager Secret Accessor for its two secrets, Firebase token-verification access through ADC, and Firestore read access for the one-off importer job. It has no editor or owner role.
+- The production API service account has only Cloud SQL Client and Secret Manager Secret Accessor for its two secrets. The one-off importer uses a separate `agronomy-member-import-prod` service account with Cloud SQL and secret access plus the temporary Firestore/Firebase Authentication permissions it needs to validate the six legacy records. Neither account has editor or owner.
 - Cloud SQL stays reachable from Cloud Run through its Unix socket. Django production settings restrict allowed hosts and CORS to the exact production frontend origin and enforce proxy HTTPS, secure cookies, and HSTS.
 - The deployer creates unique production secrets with `gcloud secrets`; secret values are never echoed to terminal output, source files, Git history, Cloud Build substitutions, or Firebase environment files.
 - Firebase Hosting preview is tested before production traffic changes. The existing live Hosting release is left available for a direct Hosting rollback. The import only adds PostgreSQL profiles, so no Firestore source record is altered.

@@ -45,7 +45,7 @@ POSTGRES_USER=agronomy_club
 POSTGRES_HOST=/cloudsql/agronomy-club:asia-southeast1:agronomy-club-postgres-prod
 ```
 
-Create one secret for Django's `API_SECRET_KEY` and one for `POSTGRES_PASSWORD`. Generate them locally, add their values through stdin, and never place their values in a shell history, source file, Cloud Build substitution, terminal capture, or Git commit. The `agronomy-club-api-prod` service account needs Cloud SQL Client and Secret Manager Secret Accessor on only those two production secret resources. The Firestore importer additionally needs read-only Firestore access and Firebase Authentication user-read access.
+Create one secret for Django's `API_SECRET_KEY` and one for `POSTGRES_PASSWORD`. Generate them locally, add their values through stdin, and never place their values in a shell history, source file, Cloud Build substitution, terminal capture, or Git commit. The `agronomy-club-api-prod` service account needs Cloud SQL Client and Secret Manager Secret Accessor on only those two production secret resources. The one-off `agronomy-member-import-prod` service account needs its own Cloud SQL and secret access plus temporary Firestore and Firebase Authentication permissions to validate legacy UIDs; it must not be assigned to the public API service.
 
 Run the migration job after each release that includes Django migrations:
 
