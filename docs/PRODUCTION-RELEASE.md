@@ -58,14 +58,14 @@ curl --fail --silent --show-error -o /dev/null -w '%{http_code}\n' https://<prod
 
 The expected responses are `Pong!` and HTTP `200` for the Django Admin sign-in page. Record the Cloud Run revision, image digest, migration execution, API host, and deployment timestamp below before changing Hosting traffic.
 
-| Release field | Recorded value |
-| --- | --- |
-| Git commit | `b0976fe` (Hosting release); `30c9326` (API CORS release) |
-| API image digest | `sha256:ef49ac77f0bf0967596f1981806fa5179715b24ad28c1f83fa4db4d0a4b31b49` |
-| Cloud Run revision | `agronomy-club-api-prod-00002-wp6` |
-| Migration execution | `agronomy-club-migrate-prod-tk64s` |
-| Production API host | `agronomy-club-api-prod-869412139245.asia-southeast1.run.app` |
-| Deployment timestamp (AWST) | 19 September 2026 19:25 |
+| Release field               | Recorded value                                                            |
+| --------------------------- | ------------------------------------------------------------------------- |
+| Git commit                  | `b0976fe` (Hosting release); `30c9326` (API CORS release)                 |
+| API image digest            | `sha256:ef49ac77f0bf0967596f1981806fa5179715b24ad28c1f83fa4db4d0a4b31b49` |
+| Cloud Run revision          | `agronomy-club-api-prod-00002-wp6`                                        |
+| Migration execution         | `agronomy-club-migrate-prod-tk64s`                                        |
+| Production API host         | `agronomy-club-api-prod-869412139245.asia-southeast1.run.app`             |
+| Deployment timestamp (AWST) | 19 September 2026 19:25                                                   |
 
 ## Deferred Firestore member import
 
@@ -93,11 +93,11 @@ gcloud run jobs execute agronomy-club-import-firestore-members-prod --region=asi
 
 After the reconciliation succeeds, restore the job to its default dry-run command and remove its temporary Firestore, Firebase Authentication, Cloud SQL, and Secret Manager access. Record aggregate counts only:
 
-| Import execution | Scanned | Candidates | Created | Existing | Invalid | Conflict | Unknown role |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Dry run before apply | | | | | | | |
-| Apply run | | | | | | | |
-| Dry run after apply | | | | | | | |
+| Import execution     | Scanned | Candidates | Created | Existing | Invalid | Conflict | Unknown role |
+| -------------------- | ------: | ---------: | ------: | -------: | ------: | -------: | -----------: |
+| Dry run before apply |         |            |         |          |         |          |              |
+| Apply run            |         |            |         |          |         |          |              |
+| Dry run after apply  |         |            |         |          |         |          |              |
 
 ## Firebase Hosting preview and promotion
 
@@ -134,16 +134,16 @@ If the live frontend smoke test fails, restore Firebase Hosting version `3c44a8a
 
 Record the new Hosting version and final smoke-test result:
 
-| Release field | Recorded value |
-| --- | --- |
-| Previous Hosting version | `3c44a8ab43b9413c` |
-| New Hosting version | `8861dd6a8385d084` |
-| Preview URL | Not promoted; the final static build was validated locally before direct release. |
-| Live public-pages smoke test | Passed: homepage and sign-in returned HTTP 200; footer copy, chapter redirect, and CORS headers for both live origins verified. |
-| Production chapter content | Passed: the University of Western Australia chapter was copied from staging and the production API returned one chapter. |
-| Existing-member completion smoke test | Deferred with the member migration. |
-| Django Admin smoke test | Passed: the `agronomy-club@uwa.edu.au` staff account was provisioned and the Admin login page returned HTTP 200. |
-| Rollback command verified | Prior live version recorded; restore procedure documented above. |
+| Release field                         | Recorded value                                                                                                                  |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| Previous Hosting version              | `3c44a8ab43b9413c`                                                                                                              |
+| New Hosting version                   | `8861dd6a8385d084`                                                                                                              |
+| Preview URL                           | Not promoted; the final static build was validated locally before direct release.                                               |
+| Live public-pages smoke test          | Passed: homepage and sign-in returned HTTP 200; footer copy, chapter redirect, and CORS headers for both live origins verified. |
+| Production chapter content            | Passed: the University of Western Australia chapter was copied from staging and the production API returned one chapter.        |
+| Existing-member completion smoke test | Deferred with the member migration.                                                                                             |
+| Django Admin smoke test               | Passed: the `agronomy-club@uwa.edu.au` staff account was provisioned and the Admin login page returned HTTP 200.                |
+| Rollback command verified             | Prior live version recorded; restore procedure documented above.                                                                |
 
 ## 19 September 2026: Chapter detail hotfix
 
@@ -165,3 +165,16 @@ Validation completed before release:
 - A fresh production browser session loaded `/chapters?page=1`, selected
   **View**, reached `/chapters?chapter=1`, and rendered the University of
   Western Australia detail page.
+
+### Chapter pagination feedback-loop hardening
+
+The Chapters list previously kept a local page state and wrote it back to
+`/chapters?page=<page>` from a router effect. Under the static export this
+could repeatedly remount the route in some browsers. Pagination now derives
+the requested positive whole-number page directly from the URL, with invalid
+values falling back to page 1. The new pure parser has unit coverage.
+
+The live release was checked in a fresh browser session on
+`https://www.agronomyclub.au`: the list performed one navigation and one API
+request, displayed UWA, and its **View** control rendered
+`/chapters?chapter=1` successfully.

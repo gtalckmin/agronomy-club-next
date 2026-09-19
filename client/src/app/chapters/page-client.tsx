@@ -1,13 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 import ChapterCard from "@/components/chapter-card";
 import { useChapters } from "@/hooks/useChapters";
 
 import ChapterClient from "./[id]/chapter-client";
+import { normaliseChapterPage } from "./page-query";
 
 export default function ChaptersClient() {
   const chapterId = useSearchParams().get("chapter");
@@ -20,25 +20,8 @@ export default function ChaptersClient() {
 }
 
 function ChapterList() {
-  const [page, setPage] = useState(1);
-
-  const router = useRouter();
   const params = useSearchParams();
-
-  useEffect(() => {
-    router.push(`/chapters?page=${page}`);
-  }, [page]);
-
-  // effectively normalise page param to a valid number
-  useEffect(() => {
-    const pageAsNum = Number(params.get("page"));
-    if (pageAsNum !== null && !isNaN(pageAsNum) && pageAsNum !== 0) {
-      setPage(pageAsNum);
-    } else {
-      // redirect to first page
-      setPage(1);
-    }
-  }, [params.get("page")]);
+  const page = normaliseChapterPage(params.get("page"));
 
   const pageSize = 15;
 
@@ -55,9 +38,7 @@ function ChapterList() {
 
   if (isError) {
     if (error.status === 404) {
-      // redirect to first page
-      setPage(1);
-      return;
+      return <p className="mt-12">No Chapters available for viewing.</p>;
     }
     console.log(error);
 
