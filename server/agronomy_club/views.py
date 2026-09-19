@@ -1,15 +1,89 @@
-from rest_framework import generics
-from .serializers import QuizSerializer, QuizDataSerializer, ResourceSerializer, ResourceTypeTagSerializer, EventListSerializer, AlumniSerializer, ChapterSerializer, ListedChapterSerializer  # noqa: E501
-from .models import Resource, ResourceTypeTag, User, Event, Quiz, Chapter
+from django.db import IntegrityError
+from django.http import FileResponse, HttpResponse
+from rest_framework import generics, status
 from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from .authentication import FirebaseTokenAuthentication
+from .serializers import AlumniSerializer, ChapterSerializer, EventListSerializer, ListedChapterSerializer, MemberProfileSerializer, QuizDataSerializer, QuizSerializer, ResourceSerializer, ResourceTypeTagSerializer  # noqa: E501
+from .models import Resource, ResourceTypeTag, User, Event, Quiz, Chapter
 from rest_framework.pagination import PageNumberPagination
-from django.http import HttpResponse, FileResponse
 
 
 # Create your views here.
 @api_view(["GET"])
 def ping(request):
     return HttpResponse("Pong!", status=200)
+
+
+class MemberProfileAPIView(APIView):
+    authentication_classes = [FirebaseTokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    @staticmethod
+    def _profile_for_request(request):
+        try:
+            return User.objects.get(firebase_uid=request.auth.uid)
+        except User.DoesNotExist:
+            return None
+
+    def get(self, request):
+        profile = self._profile_for_request(request)
+        if profile is None:
+            return Response(
+                {"detail": "Member profile not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        return Response(MemberProfileSerializer(profile).data)
+
+    def post(self, request):
+        if self._profile_for_request(request) is not None:
+            return Response(
+                {"detail": "Member profile already exists."},
+                status=status.HTTP_409_CONFLICT,
+            )
+
+        if User.objects.filter(email=request.auth.email).exists():
+            return Response(
+                {"detail": "A member profile with this email already exists."},
+                status=status.HTTP_409_CONFLICT,
+            )
+
+        serializer = MemberProfileSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        try:
+            profile = User.objects.create(
+                **serializer.validated_data,
+                email=request.auth.email,
+                firebase_uid=request.auth.uid,
+            )
+        except IntegrityError:
+            return Response(
+                {"detail": "Member profile could not be created."},
+                status=status.HTTP_409_CONFLICT,
+            )
+
+        return Response(
+            MemberProfileSerializer(profile).data,
+            status=status.HTTP_201_CREATED,
+        )
+
+    def patch(self, request):
+        profile = self._profile_for_request(request)
+        if profile is None:
+            return Response(
+                {"detail": "Member profile not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        serializer = MemberProfileSerializer(profile, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
 
 
 class EventsPagination(PageNumberPagination):

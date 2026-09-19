@@ -24,6 +24,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 APP_ENV = os.environ.get("APP_ENV", "DEVELOPMENT").upper()
 IS_PRODUCTION = APP_ENV == "PRODUCTION"
+FIREBASE_PROJECT_ID = (
+    required_environment("FIREBASE_PROJECT_ID")
+    if IS_PRODUCTION
+    else os.environ.get("FIREBASE_PROJECT_ID", "agronomy-club")
+)
 FRONTEND_URL = (
     required_environment("FRONTEND_URL")
     if IS_PRODUCTION

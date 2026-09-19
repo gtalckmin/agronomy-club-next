@@ -4,6 +4,7 @@ from . import views
 
 urlpatterns = [
     path("ping/", views.ping, name="ping"),
+    path("member-profile/", views.MemberProfileAPIView.as_view(), name="member-profile"),
 
     # Chapters
     path("chapters/", views.ChapterListAPIView.as_view(), name='chapter-list'),

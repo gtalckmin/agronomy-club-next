@@ -63,6 +63,20 @@ class AlumniSerializer(serializers.ModelSerializer):
         return chapter_data
 
 
+class MemberProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            'id',
+            'full_name',
+            'grad_yr',
+            'discipline',
+            'email',
+            'global_role',
+        ]
+        read_only_fields = ['id', 'email', 'global_role']
+
+
 class EventListSerializer(serializers.ModelSerializer):
     chapterName = serializers.CharField(source="chapter.name")
     chapterColour = serializers.CharField(source="chapter.colour")
