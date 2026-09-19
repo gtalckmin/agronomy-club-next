@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .authentication import FirebaseTokenAuthentication
-from .serializers import AlumniSerializer, ChapterSerializer, EventListSerializer, ListedChapterSerializer, MemberProfileSerializer, QuizDataSerializer, QuizSerializer, ResourceSerializer, ResourceTypeTagSerializer  # noqa: E501
+from .serializers import AlumniSerializer, ChapterSerializer, EventListSerializer, ListedChapterSerializer, MemberProfileSerializer, MemberProfileWriteSerializer, QuizDataSerializer, QuizSerializer, ResourceSerializer, ResourceTypeTagSerializer  # noqa: E501
 from .models import Resource, ResourceTypeTag, User, Event, Quiz, Chapter
 from rest_framework.pagination import PageNumberPagination
 
@@ -52,7 +52,7 @@ class MemberProfileAPIView(APIView):
                 status=status.HTTP_409_CONFLICT,
             )
 
-        serializer = MemberProfileSerializer(data=request.data)
+        serializer = MemberProfileWriteSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         try:
@@ -80,10 +80,10 @@ class MemberProfileAPIView(APIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        serializer = MemberProfileSerializer(profile, data=request.data, partial=True)
+        serializer = MemberProfileWriteSerializer(profile, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data)
+        return Response(MemberProfileSerializer(profile).data)
 
 
 class EventsPagination(PageNumberPagination):

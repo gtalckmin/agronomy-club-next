@@ -70,6 +70,68 @@ class MemberProfileAPITests(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_409_CONFLICT)
 
+    def test_create_rejects_an_incomplete_profile(self):
+        response = self.request(
+            "post",
+            {
+                "full_name": "Member Example",
+                "grad_yr": None,
+                "discipline": "",
+            },
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_get_returns_an_imported_incomplete_profile(self):
+        User.objects.create(
+            full_name="Imported Member",
+            grad_yr=None,
+            discipline="",
+            email="member@example.com",
+            firebase_uid="firebase-member",
+        )
+
+        response = self.request("get")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIsNone(response.data["grad_yr"])
+        self.assertEqual(response.data["discipline"], "")
+
+    def test_patch_completes_an_imported_profile(self):
+        member = User.objects.create(
+            full_name="Imported Member",
+            grad_yr=None,
+            discipline="",
+            email="member@example.com",
+            firebase_uid="firebase-member",
+        )
+
+        response = self.request(
+            "patch",
+            {
+                "full_name": "Imported Member",
+                "grad_yr": 2029,
+                "discipline": "Agronomy",
+            },
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        member.refresh_from_db()
+        self.assertEqual((member.grad_yr, member.discipline), (2029, "Agronomy"))
+
+    def test_patch_rejects_an_incomplete_profile_that_stays_incomplete(self):
+        User.objects.create(
+            full_name="Imported Member",
+            grad_yr=None,
+            discipline="",
+            email="member@example.com",
+            firebase_uid="firebase-member",
+        )
+
+        response = self.request("patch", {"discipline": "Agronomy"})
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
     def test_patch_only_updates_the_callers_editable_profile_fields(self):
         member = User.objects.create(
             full_name="Existing Member",

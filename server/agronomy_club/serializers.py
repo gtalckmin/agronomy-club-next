@@ -77,6 +77,44 @@ class MemberProfileSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'email', 'global_role']
 
 
+class MemberProfileWriteSerializer(serializers.ModelSerializer):
+    """Validate a complete profile without exposing identity or role fields."""
+
+    class Meta:
+        model = User
+        fields = [
+            'full_name',
+            'grad_yr',
+            'discipline',
+        ]
+        extra_kwargs = {
+            'full_name': {'required': True, 'allow_blank': False},
+            'grad_yr': {'required': True, 'allow_null': False},
+            'discipline': {'required': True, 'allow_blank': False},
+        }
+
+    def validate(self, attrs):
+        """Permit an imported incomplete profile only until it is completed."""
+        instance = self.instance
+        values = {
+            field: attrs.get(field, getattr(instance, field, None))
+            for field in self.Meta.fields
+        }
+        errors = {}
+
+        if not isinstance(values['full_name'], str) or not values['full_name'].strip():
+            errors['full_name'] = 'A full name is required.'
+        if values['grad_yr'] is None:
+            errors['grad_yr'] = 'A graduation year is required.'
+        if not isinstance(values['discipline'], str) or not values['discipline'].strip():
+            errors['discipline'] = 'A discipline is required.'
+
+        if errors:
+            raise serializers.ValidationError(errors)
+
+        return attrs
+
+
 class EventListSerializer(serializers.ModelSerializer):
     chapterName = serializers.CharField(source="chapter.name")
     chapterColour = serializers.CharField(source="chapter.colour")

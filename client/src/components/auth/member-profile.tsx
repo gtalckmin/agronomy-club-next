@@ -16,6 +16,8 @@ import {
   getMemberProfile,
   type MemberProfile,
   type MemberProfileInput,
+  profileNeedsCompletion,
+  updateMemberProfile,
 } from "@/lib/member-profile";
 
 type ViewState = "error" | "loading" | "missing" | "ready";
@@ -74,10 +76,15 @@ export default function MemberProfile() {
     );
   if (state === "error")
     return <p className="text-center text-red-700">{message}</p>;
-  if (state === "missing" && user)
+  if (
+    (state === "missing" ||
+      (state === "ready" && profile && profileNeedsCompletion(profile))) &&
+    user
+  )
     return (
       <ProfileCompletion
         user={user}
+        profile={profile}
         onComplete={(member) => {
           setProfile(member);
           setState("ready");
@@ -116,15 +123,17 @@ export default function MemberProfile() {
 
 function ProfileCompletion({
   user,
+  profile,
   onComplete,
 }: {
   user: FirebaseUser;
+  profile: MemberProfile | null;
   onComplete: (profile: MemberProfile) => void;
 }) {
   const [values, setValues] = useState<MemberProfileInput>({
-    fullName: "",
-    graduationYear: "",
-    discipline: "",
+    fullName: profile?.full_name ?? "",
+    graduationYear: profile?.grad_yr?.toString() ?? "",
+    discipline: profile?.discipline ?? "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState("");
@@ -143,7 +152,11 @@ function ProfileCompletion({
     setIsSubmitting(true);
     setMessage("");
     try {
-      onComplete(await createMemberProfile(await user.getIdToken(), values));
+      const idToken = await user.getIdToken();
+      const member = profile
+        ? await updateMemberProfile(idToken, values)
+        : await createMemberProfile(idToken, values);
+      onComplete(member);
     } catch {
       setMessage(
         "We could not save your member profile. Please try again shortly.",

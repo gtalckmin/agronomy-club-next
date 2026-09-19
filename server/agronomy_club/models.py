@@ -129,8 +129,9 @@ class User(models.Model):
 
     id = models.AutoField(primary_key=True, auto_created=True, unique=True)
     full_name = models.CharField(max_length=100)
-    grad_yr = models.PositiveIntegerField(validators=[MinValueValidator(1900), max_value_curr_year])
-    discipline = models.CharField(max_length=30)
+    # Firestore members imported from the legacy service supply these later.
+    grad_yr = models.PositiveIntegerField(null=True, blank=True, validators=[MinValueValidator(1900), max_value_curr_year])
+    discipline = models.CharField(max_length=30, blank=True)
     email = models.EmailField(max_length=255, unique=True)
     firebase_uid = models.CharField(max_length=128, unique=True, null=True, blank=True, editable=False)
     global_role = models.CharField(max_length=100, choices=[('admin', 'Admin'), ('alumni', 'Alumni'), ('user', 'User')], default='user')
