@@ -72,6 +72,19 @@ Use the first option for the first rollout. It gives the API an explicit boundar
 
 The legacy project used Firebase Authentication and Firestore. This application has a Django-owned relational data model and a PostgreSQL database. Treat data and identity migration as a separate, gated project.
 
+### Member administration and member accounts
+
+The existing Django Admin interface can manage members, chapter memberships, chapters, events, resources, quizzes, and uploaded media. A restricted Django staff account is therefore the first administration interface to deploy at `/admin/`.
+
+The public `/sign-in` and `/sign-up` pages are currently presentation-only forms: they do not call an API, create an account, or authenticate a member. Deploying Cloud Run and Cloud SQL enables staff administration, but it does not make those public forms functional by itself.
+
+Before enabling self-service member accounts, choose one supported identity path and implement it explicitly:
+
+1. **Django authentication:** link member profiles to Django's authentication users and implement signup, login, password-reset, authorization, and rate limiting in Django.
+2. **Firebase Authentication:** retain Firebase as the identity provider and implement Firebase token verification plus a reliable member-profile mapping in Django.
+
+Do not treat the current `agronomy_club.User` profile model as an authentication account. It stores member data but does not contain credentials or participate in Django's authentication system.
+
 Before importing any production data, decide all of the following:
 
 - Which legacy records are still needed: chapters, events, resources, alumni, quizzes, and media.
