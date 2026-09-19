@@ -8,6 +8,8 @@ The permanent Django Admin address is:
 https://admin.agronomyclub.org/admin/
 ```
 
+**Provisioning status:** pending. As of 19 September 2026, the `admin` DNS name has no record and `agronomyclub.org` is not verified for a Cloud Run domain mapping in project `agronomy-club`.
+
 It is a dedicated administrative subdomain, separate from the public website at `www.agronomyclub.au` and the Firebase Hosting fallback at `agronomy-club.web.app`.
 
 Do not route Django Admin through `www.agronomyclub.org/admin/`. The public site is served by Firebase Hosting, while Django Admin uses session and CSRF cookies. Sending that session-based application through the public Hosting route risks incorrect proxy and cookie behaviour.
@@ -25,13 +27,14 @@ The generated Cloud Run URL remains an operational fallback only. Staff should u
 
 ## Provisioning checklist
 
-1. Configure the `admin.agronomyclub.org` DNS record with the chosen Google Cloud HTTPS/custom-domain routing service.
-2. Attach a managed TLS certificate for `admin.agronomyclub.org` and wait for it to become active.
-3. Route the hostname only to `agronomy-club-api-prod`; do not route it through Firebase Hosting.
-4. Update the Cloud Run service environment so `API_ALLOWED_HOSTS` includes both the generated Cloud Run hostname and `admin.agronomyclub.org`.
-5. Deploy the service configuration and verify `https://admin.agronomyclub.org/admin/` redirects unauthenticated visitors to `/admin/login/?next=/admin/`.
-6. Sign in with a Django staff account, make one harmless read-only change, sign out, and confirm the next request returns to the login page.
-7. Keep the public website origins in `FRONTEND_URL` and `FRONTEND_EXTRA_ORIGINS`. The admin hostname does not need browser CORS access because its Django session stays same-origin.
+1. Verify ownership of the base domain `agronomyclub.org` in Google Search Console using the Google account that administers project `agronomy-club`.
+2. Create the `admin.agronomyclub.org` Cloud Run domain mapping for `agronomy-club-api-prod` in `asia-southeast1`.
+3. Add the mapping's generated DNS resource records at the domain's DNS provider and wait for certificate provisioning.
+4. Route the hostname only to `agronomy-club-api-prod`; do not route it through Firebase Hosting.
+5. Update the Cloud Run service environment so `API_ALLOWED_HOSTS` includes both the generated Cloud Run hostname and `admin.agronomyclub.org`.
+6. Deploy the service configuration and verify `https://admin.agronomyclub.org/admin/` redirects unauthenticated visitors to `/admin/login/?next=/admin/`.
+7. Sign in with a Django staff account, make one harmless read-only change, sign out, and confirm the next request returns to the login page.
+8. Keep the public website origins in `FRONTEND_URL` and `FRONTEND_EXTRA_ORIGINS`. The admin hostname does not need browser CORS access because its Django session stays same-origin.
 
 ## Staff account recovery
 
