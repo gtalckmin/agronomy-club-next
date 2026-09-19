@@ -39,6 +39,7 @@ Build and deploy the Django API with `deploy/cloudbuild-api-prod.yaml`. The rele
 APP_ENV=PRODUCTION
 FIREBASE_PROJECT_ID=agronomy-club
 FRONTEND_URL=https://agronomy-club.web.app
+FRONTEND_EXTRA_ORIGINS=https://www.agronomyclub.au
 API_ALLOWED_HOSTS=<generated-production-cloud-run-host>
 POSTGRES_NAME=agronomy_club
 POSTGRES_USER=agronomy_club
@@ -59,12 +60,12 @@ The expected responses are `Pong!` and HTTP `200` for the Django Admin sign-in p
 
 | Release field | Recorded value |
 | --- | --- |
-| Git commit | `b0976fe` (Hosting release) |
-| API image digest | `sha256:b291c69a1e6dbba11de886fe0a617a8d53c007bb64cf98e38d3713b145d787df` |
-| Cloud Run revision | `agronomy-club-api-prod-00001-4fs` |
+| Git commit | `b0976fe` (Hosting release); `30c9326` (API CORS release) |
+| API image digest | `sha256:ef49ac77f0bf0967596f1981806fa5179715b24ad28c1f83fa4db4d0a4b31b49` |
+| Cloud Run revision | `agronomy-club-api-prod-00002-wp6` |
 | Migration execution | `agronomy-club-migrate-prod-tk64s` |
 | Production API host | `agronomy-club-api-prod-869412139245.asia-southeast1.run.app` |
-| Deployment timestamp (AWST) | 19 September 2026 19:16 |
+| Deployment timestamp (AWST) | 19 September 2026 19:25 |
 
 ## Deferred Firestore member import
 
@@ -100,7 +101,7 @@ After the reconciliation succeeds, restore the job to its default dry-run comman
 
 ## Firebase Hosting preview and promotion
 
-Create a local ignored frontend build file from the public template. It contains public browser identifiers and the generated production API URL; it contains no server credential. The production client uses Next.js static export and Firebase Hosting serves `client/out` directly. Image requests are direct browser requests and all live data continues to be fetched from Django's API.
+Create a local ignored frontend build file from the public template. It contains public browser identifiers and the generated production API URL; it contains no server credential. The production client uses Next.js static export and Firebase Hosting serves `client/out` directly. Image requests are direct browser requests and all live data continues to be fetched from Django's API. Keep `FRONTEND_URL` as the canonical `web.app` origin and set `FRONTEND_EXTRA_ORIGINS` to any additional whitespace-separated browser origins, including `https://www.agronomyclub.au`.
 
 ```bash
 cp client/.env.production.example client/.env.production
@@ -138,7 +139,7 @@ Record the new Hosting version and final smoke-test result:
 | Previous Hosting version | `3c44a8ab43b9413c` |
 | New Hosting version | `8861dd6a8385d084` |
 | Preview URL | Not promoted; the final static build was validated locally before direct release. |
-| Live public-pages smoke test | Passed: homepage and sign-in returned HTTP 200; footer copy and chapter redirect verified. |
+| Live public-pages smoke test | Passed: homepage and sign-in returned HTTP 200; footer copy, chapter redirect, and CORS headers for both live origins verified. |
 | Production chapter content | Passed: the University of Western Australia chapter was copied from staging and the production API returned one chapter. |
 | Existing-member completion smoke test | Deferred with the member migration. |
 | Django Admin smoke test | Passed: the `agronomy-club@uwa.edu.au` staff account was provisioned and the Admin login page returned HTTP 200. |
