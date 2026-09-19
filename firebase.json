@@ -1,5 +1,21 @@
 {
   "$schema": "https://raw.githubusercontent.com/firebase/firebase-tools/master/schema/firebase-config.json",
+  "hosting": {
+    "site": "agronomy-club",
+    "source": "./client",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**",
+      "node_modules",
+      ".next",
+      "firebase-debug.log",
+      "firebase-debug.*.log"
+    ],
+    "frameworksBackend": {
+      "region": "asia-southeast1"
+    }
+  },
   "apphosting": [
     {
       "backendId": "agronomy-club-next-staging",

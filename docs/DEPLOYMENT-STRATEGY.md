@@ -1,6 +1,6 @@
 # Firebase and Google Cloud deployment strategy
 
-**Status:** The isolated App Hosting staging backend is configured for a local-source rollout. The document records the production architecture; it does not authorise a custom-domain cutover or production data migration.
+**Status:** The isolated App Hosting staging backend is configured for a local-source rollout. The Firebase Hosting production migration to `https://agronomy-club.web.app` and the import of the six verified legacy member profiles are approved; use [PRODUCTION-RELEASE.md](PRODUCTION-RELEASE.md) for the recorded, staged release procedure. Custom-domain cutover remains outside this release.
 
 ## Why this changes the deployment model
 
@@ -150,9 +150,9 @@ Production settings require non-empty values for `API_SECRET_KEY`, `FRONTEND_URL
 
 ### 4. Migrate and release
 
-- Take a read-only legacy export, transform it outside Git, and perform a staged import.
+- Run the reviewed, one-time Firestore importer through a production Cloud Run Job using Application Default Credentials; it reads only `users/{uid}` and reports aggregate counts without exporting member data.
 - Reconcile record counts and a sample of key content with the source system.
-- Create the production App Hosting backend, Cloud Run API, Cloud SQL database, secrets, and storage using the same configuration validated in staging.
+- Create the production Firebase Hosting frontend, Cloud Run API, Cloud SQL database, secrets, and storage using the same configuration validated in staging.
 - Add `www.agronomyclub.org` to Firebase and verify its certificate and redirect from the apex domain.
 - Perform the final content import, deploy a pinned release revision, and monitor logs, errors, database health, and costs during the cutover window.
 
