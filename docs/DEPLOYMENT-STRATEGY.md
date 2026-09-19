@@ -44,6 +44,19 @@ Firebase App Hosting is the recommended frontend delivery path because it has ma
 
 This separates frontend and API deployments while avoiding a manually maintained virtual machine, a Docker auto-updater, and hand-managed TLS certificates.
 
+## Current staging deployment
+
+On 19 September 2026, the Next.js client was deployed from local source to this isolated Firebase App Hosting backend:
+
+- **Backend:** `agronomy-club-next-staging`
+- **Region:** `asia-southeast1`
+- **Staging URL:** `https://agronomy-club-next-staging--agronomy-club.asia-southeast1.hosted.app`
+- **Release source:** the `feat/plant-landing-security` branch, including commit `50c6f76`
+
+The deployment passed the production build, TypeScript, ESLint, Prettier, and production dependency-audit checks before the Firebase rollout. Firebase reported the rollout as successful, and the public staging URL returned HTTP 200 with the new landing page.
+
+This staging deployment does **not** replace the existing `agronomy-club.web.app` Firebase Hosting site or either public custom domain. It deploys the Next.js client only. The Django API, Cloud SQL database, media storage, and data migration remain separate work; pages that depend on live club data must not be treated as production-ready until that API is deployed and verified.
+
 ## Domain and routing
 
 The production domain should remain `www.agronomyclub.org`; redirect the apex `agronomyclub.org` to it. Connect the custom domain through Firebase after a staging rollout succeeds.
