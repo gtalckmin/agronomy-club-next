@@ -1,6 +1,10 @@
 import os from "node:os";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 import isInsideContainer from "is-inside-container";
+
+const projectRoot = path.dirname(fileURLToPath(import.meta.url));
 
 const isWindowsDevContainer = () =>
   os.release().toLowerCase().includes("microsoft") && isInsideContainer();
@@ -8,6 +12,9 @@ const isWindowsDevContainer = () =>
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  turbopack: {
+    root: projectRoot,
+  },
   // dumb fix for windows docker
   webpack: isWindowsDevContainer()
     ? (config) => {
