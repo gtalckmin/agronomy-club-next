@@ -10,11 +10,20 @@ import { useChapters } from "@/hooks/useChapters";
 import ChapterClient from "./[id]/chapter-client";
 
 export default function ChaptersClient() {
+  const chapterId = useSearchParams().get("chapter");
+
+  if (chapterId) {
+    return <ChapterClient chapterId={chapterId} />;
+  }
+
+  return <ChapterList />;
+}
+
+function ChapterList() {
   const [page, setPage] = useState(1);
 
   const router = useRouter();
   const params = useSearchParams();
-  const chapterId = params.get("chapter");
 
   useEffect(() => {
     router.push(`/chapters?page=${page}`);
@@ -30,10 +39,6 @@ export default function ChaptersClient() {
       setPage(1);
     }
   }, [params.get("page")]);
-
-  if (chapterId) {
-    return <ChapterClient chapterId={chapterId} />;
-  }
 
   const pageSize = 15;
 

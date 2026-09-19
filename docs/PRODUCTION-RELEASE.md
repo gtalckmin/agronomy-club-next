@@ -144,3 +144,24 @@ Record the new Hosting version and final smoke-test result:
 | Existing-member completion smoke test | Deferred with the member migration. |
 | Django Admin smoke test | Passed: the `agronomy-club@uwa.edu.au` staff account was provisioned and the Admin login page returned HTTP 200. |
 | Rollback command verified | Prior live version recorded; restore procedure documented above. |
+
+## 19 September 2026: Chapter detail hotfix
+
+The public Chapters index loaded successfully, but selecting **View** for a
+chapter opened the generic Next.js “This page couldn’t load” screen. The API
+request was successful; the frontend caused the failure by conditionally
+calling its chapter-list data hook after reading the `chapter` URL parameter.
+Changing from the index state to a detail state therefore changed the React
+hook order.
+
+The fix separates the list into its own component. The route component now
+selects either the chapter detail or the list before either component calls its
+data hooks, which keeps each component's hook sequence stable.
+
+Validation completed before release:
+
+- `npm test`, `npm run lint`, and `npm run typecheck` passed.
+- `npm run build` completed with the production static-export configuration.
+- A fresh production browser session loaded `/chapters?page=1`, selected
+  **View**, reached `/chapters?chapter=1`, and rendered the University of
+  Western Australia detail page.
