@@ -19,7 +19,7 @@ Next.js client (client/, port 3000) ─── Axios ───► Django API (ser
                                                   PostgreSQL 16
 ```
 
-Next.js renders the public content and uses React Query hooks to fetch data. Django owns the application API, administration interface, validation, migrations, media, and persistence. PostgreSQL stores the club data. Nginx fronts the frontend, API, and static assets in production.
+Next.js renders public content and uses React Query hooks to fetch data. Firebase Authentication owns member email/password identity; the browser sends Firebase ID tokens to Django for member-profile requests. Django owns the application API, member roles, administration interface, validation, migrations, media, and persistence. PostgreSQL stores club data. Nginx fronts the frontend, API, and static assets in production.
 
 ## Domain model
 
@@ -64,3 +64,5 @@ This is not the recommended long-term production architecture. The approved dire
 ## Legacy migration boundaries
 
 The older repository contains Firebase Authentication/Firestore data and a local service-account key that was tracked historically. Rotate that key and any related Firebase secrets before sharing or reusing the older repository. Data migration from Firebase into PostgreSQL needs a separately reviewed export, transformation, and import plan; no credentials or production data should be moved through Git.
+
+The active site uses Firebase Authentication only for identity. It does not read or write the legacy Firestore `users` collection. A verified Firebase UID is stored against each Cloud SQL member profile, allowing Django Admin to manage member roles and chapter memberships without storing passwords.

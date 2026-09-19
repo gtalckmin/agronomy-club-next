@@ -88,12 +88,16 @@ The legacy project used Firebase Authentication and Firestore. This application 
 
 The existing Django Admin interface can manage members, chapter memberships, chapters, events, resources, quizzes, and uploaded media. A restricted Django staff account is therefore the first administration interface to deploy at `/admin/`.
 
-The public `/sign-in` and `/sign-up` pages are currently presentation-only forms: they do not call an API, create an account, or authenticate a member. Deploying Cloud Run and Cloud SQL enables staff administration, but it does not make those public forms functional by itself.
+Member authentication uses Firebase Authentication as the identity provider and Cloud SQL as the member-profile source of truth. The Next.js client supports Firebase email/password registration, verification, sign-in, password reset, and sign-out. It sends a Firebase ID token to the Django member-profile API; Django verifies the token for the `agronomy-club` Firebase project and maps its UID to `agronomy_club.User.firebase_uid`. Member profile fields, roles, and chapter memberships stay in Django and are managed through Django Admin.
+
+Firebase email verification is required before the API creates a member profile. The client never supplies a member role, Firebase UID, or profile email to Django: those are assigned from the verified token or server defaults. Existing Firebase users without a Cloud SQL profile complete the profile after sign-in. Existing Django profiles without a Firebase UID require a separately reviewed staff reconciliation; they are never linked automatically by email.
+
+The staging App Hosting hostname `agronomy-club-next-staging--agronomy-club.asia-southeast1.hosted.app` is an authorised Firebase Authentication domain for web verification and password-reset actions. The Firebase Web SDK identifiers are public build-time configuration in `client/apphosting.yaml`; no service-account key is included in the frontend. The Cloud Run service requires `FIREBASE_PROJECT_ID=agronomy-club` and uses its runtime service account to verify ID tokens through the Firebase Admin SDK.
 
 Before enabling self-service member accounts, choose one supported identity path and implement it explicitly:
 
 1. **Django authentication:** link member profiles to Django's authentication users and implement signup, login, password-reset, authorization, and rate limiting in Django.
-2. **Firebase Authentication:** retain Firebase as the identity provider and implement Firebase token verification plus a reliable member-profile mapping in Django.
+2. **Firebase Authentication:** retain Firebase as the identity provider and implement Firebase token verification plus a reliable member-profile mapping in Django. This is the implemented staging approach.
 
 Do not treat the current `agronomy_club.User` profile model as an authentication account. It stores member data but does not contain credentials or participate in Django's authentication system.
 

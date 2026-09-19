@@ -6,7 +6,7 @@ Enable members to create and use Agronomy Club accounts without adding password 
 
 ## Scope
 
-The first release supports email-and-password registration, sign-in, sign-out, password reset, and a profile-completion step for an authenticated person who does not yet have a Django profile. It does not migrate legacy Firestore records, introduce Firebase Dynamic Links, or make Firestore a second member database.
+The first release supports email-and-password registration, email verification, sign-in, sign-out, password reset, and a profile-completion step for an authenticated person who does not yet have a Django profile. It does not migrate legacy Firestore records, introduce Firebase Dynamic Links, or make Firestore a second member database.
 
 ## Architecture
 
@@ -53,12 +53,11 @@ Missing, malformed, expired, or wrong-project bearer tokens receive `401`. A UID
 
 ## Client flow
 
-1. Registration validates matching passwords and required profile fields.
-2. The client creates the Firebase email/password identity and requests an ID token.
-3. The client creates the Django member profile with that token.
-4. A successful registration lands on the member profile page with an authenticated confirmation.
-5. Sign-in authenticates with Firebase, checks the profile endpoint, then either opens the profile page or requests the missing profile details.
-6. Password reset uses Firebase's web email action flow, not mobile email-link authentication or Firebase Dynamic Links.
+1. Registration validates matching passwords and required profile fields, creates the Firebase email/password identity, and sends a Firebase web email-verification action.
+2. The site creates no Django profile until the person has verified their email address.
+3. After verification, sign-in authenticates with Firebase, checks the profile endpoint, then either opens the member profile or requests the missing profile details.
+4. Profile completion sends the verified Firebase ID token and required profile data to Django.
+5. Password reset uses Firebase's web email action flow, not mobile email-link authentication or Firebase Dynamic Links.
 
 ## Security and operations
 
@@ -73,4 +72,4 @@ Missing, malformed, expired, or wrong-project bearer tokens receive `401`. A UID
 
 Backend tests cover token rejection, profile creation from verified identity, default-role enforcement, duplicate-profile handling, and own-profile updates. Client tests cover form validation and authenticated API request construction where the repository's test tooling supports them. The release also runs format, lint, TypeScript, Django tests, database migration checks, and a staged browser smoke test using a disposable Firebase account.
 
-Acceptance requires a person to create an email/password account at the staging site, receive a Django member profile with role `user`, sign out and sign back in, reset their password, and appear in Django Admin without exposing another member's profile or role controls.
+Acceptance requires a person to create an email/password account at the staging site, verify their email, receive a Django member profile with role `user`, sign out and sign back in, reset their password, and appear in Django Admin without exposing another member's profile or role controls.
