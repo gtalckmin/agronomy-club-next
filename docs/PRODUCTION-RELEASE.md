@@ -59,12 +59,12 @@ The expected responses are `Pong!` and HTTP `200` for the Django Admin sign-in p
 
 | Release field | Recorded value |
 | --- | --- |
-| Git commit | |
-| API image digest | |
-| Cloud Run revision | |
-| Migration execution | |
-| Production API host | |
-| Deployment timestamp (AWST) | |
+| Git commit | `b0976fe` (Hosting release) |
+| API image digest | `sha256:b291c69a1e6dbba11de886fe0a617a8d53c007bb64cf98e38d3713b145d787df` |
+| Cloud Run revision | `agronomy-club-api-prod-00001-4fs` |
+| Migration execution | `agronomy-club-migrate-prod-tk64s` |
+| Production API host | `agronomy-club-api-prod-869412139245.asia-southeast1.run.app` |
+| Deployment timestamp (AWST) | 19 September 2026 19:16 |
 
 ## Deferred Firestore member import
 
@@ -136,9 +136,9 @@ Record the new Hosting version and final smoke-test result:
 | Release field | Recorded value |
 | --- | --- |
 | Previous Hosting version | `3c44a8ab43b9413c` |
-| New Hosting version | |
-| Preview URL | |
-| Live public-pages smoke test | |
-| Existing-member completion smoke test | |
-| Django Admin smoke test | |
-| Rollback command verified | |
+| New Hosting version | `8861dd6a8385d084` |
+| Preview URL | Not promoted; the final static build was validated locally before direct release. |
+| Live public-pages smoke test | Passed: homepage and sign-in returned HTTP 200; footer copy and chapter redirect verified. |
+| Existing-member completion smoke test | Deferred with the member migration. |
+| Django Admin smoke test | Pending staff bootstrap. |
+| Rollback command verified | Prior live version recorded; restore procedure documented above. |
