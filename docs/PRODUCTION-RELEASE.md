@@ -139,6 +139,7 @@ Record the new Hosting version and final smoke-test result:
 | New Hosting version | `8861dd6a8385d084` |
 | Preview URL | Not promoted; the final static build was validated locally before direct release. |
 | Live public-pages smoke test | Passed: homepage and sign-in returned HTTP 200; footer copy and chapter redirect verified. |
+| Production chapter content | Passed: the University of Western Australia chapter was copied from staging and the production API returned one chapter. |
 | Existing-member completion smoke test | Deferred with the member migration. |
-| Django Admin smoke test | Pending staff bootstrap. |
+| Django Admin smoke test | Passed: the `agronomy-club@uwa.edu.au` staff account was provisioned and the Admin login page returned HTTP 200. |
 | Rollback command verified | Prior live version recorded; restore procedure documented above. |
