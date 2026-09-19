@@ -198,3 +198,34 @@ class FirestoreMemberImporterTests(TestCase):
 
         with self.assertRaisesRegex(CommandError, "did not match"):
             call_command("import_firestore_members", "--expect-clean-dry-run=6")
+
+    @patch("agronomy_club.management.commands.import_firestore_members.FirestoreMemberImporter")
+    def test_command_rejects_an_apply_result_that_does_not_create_every_member(
+        self,
+        importer_class,
+    ):
+        importer = importer_class.from_settings.return_value
+        importer.import_members.return_value = ImportSummary(
+            scanned=6,
+            candidates=6,
+            created=5,
+            skipped_conflict=1,
+        )
+
+        with self.assertRaisesRegex(CommandError, "did not match"):
+            call_command("import_firestore_members", "--apply", "--expect-created=6")
+
+    @patch("agronomy_club.management.commands.import_firestore_members.FirestoreMemberImporter")
+    def test_command_rejects_a_reconciliation_that_is_not_exactly_existing(
+        self,
+        importer_class,
+    ):
+        importer = importer_class.from_settings.return_value
+        importer.import_members.return_value = ImportSummary(
+            scanned=6,
+            existing=5,
+            skipped_conflict=1,
+        )
+
+        with self.assertRaisesRegex(CommandError, "did not match"):
+            call_command("import_firestore_members", "--expect-existing=6")

@@ -79,7 +79,18 @@ gcloud run jobs execute agronomy-club-import-firestore-members-prod --region=asi
 
 The command fails unless `scanned: 6`, `candidates: 6`, `created: 0`, `existing: 0`, `skipped_invalid: 0`, `skipped_conflict: 0`, and `skipped_unknown_role: 0`. Any failure stops the release until the data issue is understood; do not use `--apply` to force a partial import.
 
-Set the job command to `python manage.py import_firestore_members --apply`, run it once, then return the job to its default dry-run command. The apply run must report six created profiles and zero skip counts. A final dry-run must report six existing profiles and no candidates. Record aggregate counts only:
+Run the write step only through its matching gate, then run the post-import
+reconciliation gate. Each execution fails if any count differs from its expected
+state, including a skipped or partially created profile:
+
+```bash
+gcloud run jobs update agronomy-club-import-firestore-members-prod --region=asia-southeast1 --project=agronomy-club --command=python --args=manage.py,import_firestore_members,--apply,--expect-created=6
+gcloud run jobs execute agronomy-club-import-firestore-members-prod --region=asia-southeast1 --project=agronomy-club --wait
+gcloud run jobs update agronomy-club-import-firestore-members-prod --region=asia-southeast1 --project=agronomy-club --command=python --args=manage.py,import_firestore_members,--expect-existing=6
+gcloud run jobs execute agronomy-club-import-firestore-members-prod --region=asia-southeast1 --project=agronomy-club --wait
+```
+
+After the reconciliation succeeds, restore the job to its default dry-run command and remove its temporary Firestore, Firebase Authentication, Cloud SQL, and Secret Manager access. Record aggregate counts only:
 
 | Import execution | Scanned | Candidates | Created | Existing | Invalid | Conflict | Unknown role |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
