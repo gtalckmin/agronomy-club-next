@@ -41,6 +41,20 @@ class MemberAdministrationTests(TestCase):
         }
         self.assertIn(ChapterMembership, inline_models)
 
+    def test_admin_navigation_labels_club_users_as_members(self):
+        self.client.force_login(self.staff_user)
+
+        response = self.client.get(reverse("admin:index"))
+
+        self.assertEqual(response.status_code, 200)
+        member_model = next(
+            model
+            for app in response.context["app_list"]
+            for model in app["models"]
+            if app["app_label"] == "agronomy_club" and model["object_name"] == "User"
+        )
+        self.assertEqual(member_model["name"], "Members")
+
     def test_chapter_edit_page_includes_member_inline(self):
         self.client.force_login(self.staff_user)
 

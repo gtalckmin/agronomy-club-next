@@ -139,6 +139,10 @@ class User(models.Model):
     def __str__(self):
         return f"{self.full_name} - {self.global_role}"
 
+    class Meta:
+        verbose_name = "Member"
+        verbose_name_plural = "Members"
+
 
 class ChapterMembership(models.Model):
     id = models.AutoField(primary_key=True, auto_created=True, unique=True)
