@@ -70,13 +70,14 @@ The expected responses are `Pong!` and HTTP `200` for the Django Admin sign-in p
 
 The importer is safe by default. It reads only Firestore `users/{uid}` documents and writes no member record unless the job runs with `--apply`. It queries Firebase Authentication for the authoritative email and skips a Firestore document if the UID, name, role, or optional source email is invalid. Existing Django profiles are never overwritten.
 
-First run the job in dry-run mode:
+First update the job to run the machine-checkable dry-run gate, then execute it:
 
 ```bash
+gcloud run jobs update agronomy-club-import-firestore-members-prod --region=asia-southeast1 --project=agronomy-club --command=python --args=manage.py,import_firestore_members,--expect-clean-dry-run=6
 gcloud run jobs execute agronomy-club-import-firestore-members-prod --region=asia-southeast1 --project=agronomy-club --wait
 ```
 
-Inspect the job's aggregate JSON log. Before applying, require `scanned: 6`, `candidates: 6`, `created: 0`, `existing: 0`, `skipped_invalid: 0`, `skipped_conflict: 0`, and `skipped_unknown_role: 0`. Any different result stops the release until the data issue is understood; do not use `--apply` to force a partial import.
+The command fails unless `scanned: 6`, `candidates: 6`, `created: 0`, `existing: 0`, `skipped_invalid: 0`, `skipped_conflict: 0`, and `skipped_unknown_role: 0`. Any failure stops the release until the data issue is understood; do not use `--apply` to force a partial import.
 
 Set the job command to `python manage.py import_firestore_members --apply`, run it once, then return the job to its default dry-run command. The apply run must report six created profiles and zero skip counts. A final dry-run must report six existing profiles and no candidates. Record aggregate counts only:
 

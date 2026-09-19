@@ -1,6 +1,7 @@
 from unittest.mock import patch
 
 from django.core.management import call_command
+from django.core.management.base import CommandError
 from django.test import TestCase
 from firebase_admin import auth
 
@@ -183,3 +184,17 @@ class FirestoreMemberImporterTests(TestCase):
         call_command("import_firestore_members")
 
         importer.import_members.assert_called_once_with(apply=False)
+
+    @patch("agronomy_club.management.commands.import_firestore_members.FirestoreMemberImporter")
+    def test_command_rejects_a_dry_run_that_is_not_a_clean_expected_import(
+        self,
+        importer_class,
+    ):
+        importer = importer_class.from_settings.return_value
+        importer.import_members.return_value = ImportSummary(
+            scanned=6,
+            candidates=5,
+        )
+
+        with self.assertRaisesRegex(CommandError, "did not match"):
+            call_command("import_firestore_members", "--expect-clean-dry-run=6")
