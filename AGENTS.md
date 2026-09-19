@@ -38,5 +38,5 @@ For model or API changes, also apply migrations against a local PostgreSQL datab
 
 - Develop in a feature branch and open a pull request into `main`.
 - GitHub Actions checks formatting, linting, TypeScript, Python linting, Django migrations, and backend tests.
-- A push to `main` publishes multi-architecture frontend and server images to GHCR. The deployment host's Watchtower service updates containers from those images.
+- A push to `main` can publish container images to GHCR, but it does not deploy the managed production site. Production uses Firebase Hosting for the static client, Cloud Run for Django, and Cloud SQL for PostgreSQL. Follow `docs/HANDOVER.md` and `docs/PRODUCTION-RELEASE.md` for each release.
 - Keep `origin` pointed to this fork. Add `upstream` pointing to `https://github.com/codersforcauses/agronomy-club.git` when synchronising changes from Coders for Causes.

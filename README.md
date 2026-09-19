@@ -11,6 +11,8 @@ The public website and member services for Agronomy Club. It is a full-stack app
 
 The main features are chapter profiles, events, resources, quizzes, alumni records, and member/chapter memberships. Detailed architecture and operational notes are in [docs/PROJECT.md](docs/PROJECT.md). The proposed move from the former Firebase deployment to managed Firebase and Google Cloud services is documented in [docs/DEPLOYMENT-STRATEGY.md](docs/DEPLOYMENT-STRATEGY.md).
 
+For the current production services, deployment procedures, data-migration boundary, outstanding work, and staff-access path, start with [docs/HANDOVER.md](docs/HANDOVER.md). Short persistent context for coding agents is in [docs/AGENT-MEMORY.md](docs/AGENT-MEMORY.md).
+
 ## Start developing
 
 The recommended workflow is the Dev Container in VS Code. It provides the required Node, Python, Poetry, Docker, and database tooling.

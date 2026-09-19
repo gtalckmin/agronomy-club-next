@@ -6,6 +6,8 @@ This is the active, modernised Agronomy Club website. It replaces the older Fire
 
 The maintained fork is `gtalckmin/agronomy-club-next`; its upstream is `codersforcauses/agronomy-club`. Keep upstream changes reviewable by fetching and merging them through a normal branch/PR workflow.
 
+Managed production is live on Firebase Hosting, Cloud Run, and Cloud SQL. The container/Nginx architecture below remains useful for local and self-managed deployments, but it is not the active production path. Read [HANDOVER.md](HANDOVER.md) before releasing or administering production.
+
 ## Architecture
 
 ```text
@@ -48,7 +50,7 @@ The repository checks frontend Prettier, ESLint, and TypeScript; backend Flake8;
 
 Use `npm ci`, rather than `npm install`, for reproducible frontend dependency installation. Poetry manages Python dependencies through `server/pyproject.toml` and `server/poetry.lock`.
 
-## Current container deployment model
+## Self-managed container deployment model
 
 The deployment workflow builds both client and server images on each push to `main`. Images are published to this fork's GHCR namespace. The checked-in Compose configuration is for a self-managed host, where it starts PostgreSQL, the API, frontend, and Nginx from recorded image digests.
 

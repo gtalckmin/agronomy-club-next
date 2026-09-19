@@ -1,6 +1,6 @@
 # Firebase and Google Cloud deployment strategy
 
-**Status:** The isolated App Hosting staging backend is configured for a local-source rollout. Production uses a static Firebase Hosting deployment at `https://agronomy-club.web.app`; the legacy Firestore member migration is intentionally deferred so its users can be exported and uploaded later. Use [PRODUCTION-RELEASE.md](PRODUCTION-RELEASE.md) for the recorded release procedure. Custom-domain cutover remains outside this release.
+**Status:** Production uses a static Firebase Hosting deployment at `https://agronomy-club.web.app` and the live custom domain `https://www.agronomyclub.au`. The legacy Firestore member migration remains intentionally deferred so its users can be exported and uploaded later. This document retains the migration design; use [HANDOVER.md](HANDOVER.md) and [PRODUCTION-RELEASE.md](PRODUCTION-RELEASE.md) for the current release procedure and verified operational state.
 
 ## Why this changes the deployment model
 
