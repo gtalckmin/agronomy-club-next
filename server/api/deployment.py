@@ -7,3 +7,10 @@ def required_environment(name: str) -> str:
     if not value:
         raise RuntimeError(f"Missing required environment setting: {name}")
     return value
+
+
+def split_origins(value: str) -> list[str]:
+    """Normalize a whitespace-separated list of browser origins."""
+    return list(
+        dict.fromkeys(origin.rstrip("/") for origin in value.split() if origin)
+    )

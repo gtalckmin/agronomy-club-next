@@ -14,7 +14,7 @@ import os
 from pathlib import Path
 
 from dotenv import load_dotenv
-from api.deployment import required_environment
+from api.deployment import required_environment, split_origins
 
 load_dotenv()
 
@@ -34,6 +34,10 @@ FRONTEND_URL = (
     if IS_PRODUCTION
     else os.environ.get("FRONTEND_URL", "http://localhost:3000")
 ).rstrip("/")
+FRONTEND_ORIGINS = [
+    FRONTEND_URL,
+    *split_origins(os.environ.get("FRONTEND_EXTRA_ORIGINS", "")),
+]
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -83,10 +87,10 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:3003",
     "http://127.0.0.1:3000",
-    FRONTEND_URL
-] if not IS_PRODUCTION else [FRONTEND_URL]
+    *FRONTEND_ORIGINS,
+] if not IS_PRODUCTION else FRONTEND_ORIGINS
 
-CSRF_TRUSTED_ORIGINS = [FRONTEND_URL]
+CSRF_TRUSTED_ORIGINS = FRONTEND_ORIGINS
 
 if IS_PRODUCTION:
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
